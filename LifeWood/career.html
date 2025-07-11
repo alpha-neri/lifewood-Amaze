@@ -208,7 +208,7 @@
         </div>
     </footer>
 
-    <!-- REUSED Scripts -->
+    <!-- *** CORRECTED & COMPLETE SCRIPT BLOCK FROM INDEX.HTML *** -->
     <script>
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
@@ -241,10 +241,12 @@
 
         // Add scrolled class to header
         window.addEventListener('scroll', () => {
+            // For careers page, header starts scrolled. This logic is more for the main page.
             if (window.scrollY > 50) {
                 header.classList.add('scrolled');
             } else {
-                // Keep header in "scrolled" state
+                 // On the main page, the header is transparent at the top. On this page, we want it to stay opaque.
+                 // The initial CSS for `.header` on careers.css handles this, so we don't need a `remove` here unless we changed the CSS.
             }
         });
 
@@ -261,6 +263,113 @@
             });
         }, appearOptions);
         faders.forEach(fader => { appearOnScroll.observe(fader); });
+
+        // --- HERO SLIDER SCRIPT --- (Included for consistency, will not run if elements are not found)
+        const heroSlider = document.querySelector('.hero-slider .slider-container');
+        if (heroSlider) {
+
+            const firstSlide = heroSlider.querySelector('.slide');
+            firstSlide.classList.remove('active');
+            setTimeout(() => {
+                firstSlide.classList.add('active');
+            }, 500);
+
+            const sliderWrapper = heroSlider.querySelector('.slider-wrapper');
+            const slides = heroSlider.querySelectorAll('.slide');
+            const prevBtn = heroSlider.querySelector('.prev');
+            const nextBtn = heroSlider.querySelector('.next');
+            const dotsContainer = heroSlider.querySelector('.slider-dots');
+            let currentIndex = 0;
+            let slideInterval;
+
+            if (slides.length > 0) {
+                slides.forEach((_, i) => {
+                    const dot = document.createElement('span');
+                    dot.classList.add('dot');
+                    if (i === 0) dot.classList.add('active');
+                    dot.addEventListener('click', () => {
+                        goToSlide(i);
+                        resetInterval();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+
+                const dots = dotsContainer.querySelectorAll('.dot');
+
+                function goToSlide(index) {
+                    if (currentIndex === index) return;
+                    
+                    slides[currentIndex].classList.remove('active');
+                    currentIndex = index;
+                    slides[currentIndex].classList.add('active');
+                    
+                    sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === currentIndex);
+                    });
+                }
+
+                function nextSlide() {
+                    const newIndex = (currentIndex + 1) % slides.length;
+                    goToSlide(newIndex);
+                }
+
+                function prevSlide() {
+                    const newIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    goToSlide(newIndex);
+                }
+                
+                function startInterval() {
+                    slideInterval = setInterval(nextSlide, 7000);
+                }
+                
+                function resetInterval() {
+                    clearInterval(slideInterval);
+                    startInterval();
+                }
+
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                    resetInterval();
+                });
+
+                prevBtn.addEventListener('click', () => {
+                    prevSlide();
+                    resetInterval();
+                });
+                
+                startInterval();
+            }
+        }
+
+        // --- SCRIPT FOR 'WHO WE ARE' SECTION --- (Included for consistency, will not run if elements are not found)
+        document.addEventListener('DOMContentLoaded', () => {
+            const options = {
+                root: null, 
+                rootMargin: '0px',
+                threshold: 0.2 
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, options);
+
+            const leftColumn = document.querySelector('.about-left-column');
+            const rightColumn = document.querySelector('.about-right-column');
+
+            if (leftColumn) {
+                observer.observe(leftColumn);
+            }
+            if (rightColumn) {
+                observer.observe(rightColumn);
+            }
+        });
     </script>
 </body>
 </html>
