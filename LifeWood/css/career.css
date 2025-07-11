@@ -56,16 +56,19 @@ img { max-width: 100%; height: auto; }
 section { padding: 100px 5%; }
 .container { max-width: 1200px; margin: 0 auto; }
 
-/* --- [COPIED] HEADER AND LOGO STYLES --- */
+/* --- HEADER AND LOGO STYLES (DEFINITIVELY CORRECTED) --- */
 .header {
     position: fixed;
     top: 0; left: 0; width: 100%; z-index: 1000;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+.header.scrolled {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(19, 48, 32, 0.1);
     box-shadow: 0 4px 20px rgba(19, 48, 32, 0.1);
-    transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
 .navbar {
@@ -74,9 +77,14 @@ section { padding: 100px 5%; }
 }
 
 .nav-logo, .nav-link, .nav-toggle {
+    color: var(--text-light);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.header.scrolled .nav-logo, .header.scrolled .nav-link, .header.scrolled .nav-toggle {
     color: var(--text-dark);
     text-shadow: none;
-    transition: color 0.4s ease;
 }
 
 .nav-logo {
@@ -86,10 +94,16 @@ section { padding: 100px 5%; }
 
 .logo-icon {
     display: inline-block; width: 0.7em; height: 1.0em;
-    background-color: var(--accent-secondary);
+    background-color: var(--accent-secondary); /* This is the permanent yellow/saffron color. */
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease; /* Removed background-color from transition */
 }
+
+/* 
+   The faulty ".header.scrolled .logo-icon" rule has been completely removed.
+   The hexagon's color is now static and will not change on scroll.
+*/
+
 .nav-logo:hover .logo-icon { transform: rotate(15deg); }
 .nav-menu { display: flex; align-items: center; list-style: none; gap: 35px; }
 .nav-link { font-family: var(--font-heading); font-weight: 600; position: relative; padding: 8px 0; letter-spacing: 0.02em; }
@@ -98,18 +112,18 @@ section { padding: 100px 5%; }
     background-color: var(--saffaron);
     transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.nav-link:hover { color: var(--accent-primary); }
+.nav-link:hover { color: var(--accent-secondary); }
+.header.scrolled .nav-link:hover { color: var(--accent-primary); }
 .nav-link:hover::after { width: 100%; }
 
 .nav-link-btn {
     padding: 10px 25px;
     border-radius: 50px;
     font-weight: 700;
-    background-color: var(--accent-primary);
-    border: 2px solid var(--accent-primary);
-    color: var(--text-light);
-    text-shadow: none;
-    box-shadow: 0 4px 15px rgba(4, 98, 65, 0.2);
+    background-color: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    color: var(--white);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     transition: all 0.3s ease;
 }
 
@@ -118,10 +132,26 @@ section { padding: 100px 5%; }
     border-color: var(--accent-secondary);
     color: var(--text-dark);
     transform: translateY(-3px) scale(1.05);
+    text-shadow: none;
+}
+
+.header.scrolled .nav-link-btn {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--text-light);
+    text-shadow: none;
+    box-shadow: 0 4px 15px rgba(4, 98, 65, 0.2);
+}
+
+.header.scrolled .nav-link-btn:hover {
+    background-color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    color: var(--text-dark);
     box-shadow: 0 8px 25px rgba(4, 98, 65, 0.3);
 }
 
 .nav-toggle { display: none; font-size: 1.5rem; cursor: pointer; z-index: 1002; }
+
 
 /* --- GENERAL SECTION STYLING --- */
 main { padding-top: var(--nav-height); }
@@ -144,9 +174,8 @@ main { padding-top: var(--nav-height); }
 .btn-accent { background-color: var(--accent-secondary); color: var(--text-dark); border-color: var(--accent-secondary); }
 .btn-accent:hover { background-color: var(--accent-tertiary); border-color: var(--accent-tertiary); color: var(--text-dark); }
 
-/* --- [NEW] CAREERS PAGE STYLES --- */
+/* --- CAREERS PAGE STYLES --- */
 
-/* 1. Careers Hero - ENHANCED */
 #careers-hero {
     position: relative;
     padding: 140px 5% 120px;
@@ -186,7 +215,6 @@ main { padding-top: var(--nav-height); }
     line-height: 1.7;
 }
 
-/* 2. Why Join Us */
 #why-join-us {
     background-color: var(--sea-salt);
 }
@@ -217,17 +245,13 @@ main { padding-top: var(--nav-height); }
     margin-bottom: 20px;
 }
 
-/* 3. Our Values */
 .core-values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; text-align: center; }
 .core-value-item .value-icon { font-size: 2.5rem; color: var(--accent-secondary); margin-bottom: 15px; display: inline-block; }
-/* Styles for dark background */
 .dark-section .core-value-item h4 { color: var(--text-light); }
 .dark-section .core-value-item p { color: rgba(255,255,255,0.7); }
-/* Styles for light background */
 .core-value-item h4 { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; }
 .core-value-item p { font-size: 0.95rem; color: #555; line-height: 1.6; }
 
-/* 4. Openings & CTA Section */
 #openings {
     background-color: var(--paper);
 }
@@ -289,7 +313,6 @@ main { padding-top: var(--nav-height); }
     border-color: var(--accent-primary);
 }
 
-/* New, refined CTA block styling */
 .openings-cta {
     text-align: center;
     max-width: 900px;
@@ -310,7 +333,6 @@ main { padding-top: var(--nav-height); }
     margin: 0 auto 30px auto;
 }
 
-/* --- [COPIED] FOOTER STYLES --- */
 .footer { background-color: var(--bg-dark); color: var(--text-light); padding: 80px 5% 0; }
 .footer-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 50px; padding-bottom: 50px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 .footer-widget h4 { font-size: 1.3rem; font-weight: 600; color: var(--text-light); margin-bottom: 25px; position: relative; padding-bottom: 10px; }
@@ -348,7 +370,6 @@ main { padding-top: var(--nav-height); }
     section { padding: 80px 5%; }
     main { padding-top: 70px; }
     
-    /* Responsive Header/Nav */
     .header { background: var(--white); box-shadow: 0 2px 10px rgba(19, 48, 32, 0.08); backdrop-filter: none; }
     .navbar { height: 70px; }
     .nav-menu {
@@ -363,7 +384,6 @@ main { padding-top: var(--nav-height); }
     .nav-toggle { display: block; color: var(--text-dark); text-shadow: none; }
     .nav-toggle.active i::before { content: '\f00d'; }
     
-    /* Responsive Careers Page Styles */
     #careers-hero { padding: 120px 5% 100px; }
     .careers-title { font-size: 2.8rem; }
     .careers-intro { font-size: 1.1rem; }
@@ -371,6 +391,5 @@ main { padding-top: var(--nav-height); }
     .job-post .btn-outline { width: 100%; text-align: center; margin-top: 15px; }
     .openings-cta h2 { font-size: 2rem; }
 
-    /* Responsive Footer */
     .footer-bottom-bar { justify-content: center; }
 }
