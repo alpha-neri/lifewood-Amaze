@@ -1,0 +1,200 @@
+/* Enable smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* --- Lifewood | Project Page Specific Styles --- */
+.nav-menu .nav-link.active-page {
+    color: var(--saffaron);
+    font-weight: 700;
+}
+.header.scrolled .nav-menu .nav-link.active-page {
+    color: var(--accent-primary);
+}
+.header.scrolled .nav-menu .nav-link.active-page:hover {
+    color: var(--accent-secondary);
+}
+
+/* --- DYNAMIC HERO SLIDER --- */
+.hero-slider.project-hero {
+    height: 90vh;
+    min-height: 600px;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--dark-serpent);
+}
+.project-hero .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+.project-hero .slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+.project-hero .slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 100%);
+    z-index: 1;
+}
+.project-hero .slide-content {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    max-width: 650px;
+}
+.project-hero .slide-content .tag {
+    background-color: var(--saffaron);
+    color: var(--white);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+.project-hero .slide-content h1 {
+    font-size: 3.8rem;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.project-hero .slide-content p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 30px;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+.slider-nav {
+    position: absolute;
+    bottom: 40px;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    gap: 12px;
+}
+.slider-nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.slider-nav-dot.active {
+    background-color: var(--saffaron);
+    transform: scale(1.2);
+}
+
+/* --- INTERACTIVE PROJECT GRID --- */
+#projects-showcase {
+    background-color: var(--paper);
+}
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+.project-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    aspect-ratio: 4 / 3;
+    display: block;
+    color: var(--white);
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+.project-card:hover {
+    box-shadow: 0 8px 30px rgba(4, 98, 65, 0.2);
+}
+.project-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+.project-card:hover .project-card-image {
+    transform: scale(1.05);
+}
+.project-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.95) 100%);
+    transition: background 0.4s ease;
+}
+
+/* ✅ FIXED: Made tag text color white */
+.project-card-tags .tag {
+    margin-right: 8px;
+    margin-bottom: 10px;
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    font-weight: 500;
+    color: var(--white); /* Ensures text is visible */
+}
+
+/* ✅ FIXED: Made title text color white */
+.project-card-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    color: var(--white); /* Ensures text is visible */
+}
+/* Style for the description paragraph */
+.project-card-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--light-gray);
+    /* Hide it by default */
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.4s ease, margin-top 0.4s ease;
+}
+/* Reveal the description on card hover */
+.project-card:hover .project-card-description {
+    opacity: 1;
+    max-height: 100px;
+    margin-top: 10px;
+}
+/* Responsive adjustment */
+@media (max-width: 768px) {
+    .project-hero .slide-content h1 {
+        font-size: 2.8rem;
+    }
+}
