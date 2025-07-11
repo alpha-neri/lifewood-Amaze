@@ -31,7 +31,7 @@
                 <li><a href="project.html" class="nav-link">Project</a></li>
                 <li><a href="index.html#solutions" class="nav-link">Services</a></li>
                 <li><a href="index.html#news" class="nav-link">News</a></li>
-                <li><a href="career.html" class="nav-link">Career</a></li>
+                <li><a href="index.html#testimonials" class="nav-link">Clients</a></li>
                 <li><a href="index.html#contact" class="nav-link-btn btn">Contact Us</a></li>
             </ul>
             <div class="nav-toggle" id="nav-toggle">
@@ -208,7 +208,7 @@
         </div>
     </footer>
 
-    <!-- *** CORRECTED & COMPLETE SCRIPT BLOCK FROM INDEX.HTML *** -->
+    <!-- SCRIPT BLOCK - IDENTICAL TO INDEX.HTML -->
     <script>
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
@@ -239,14 +239,12 @@
             } 
         });
 
-        // Add scrolled class to header
+        // *** THIS IS THE CORRECTED SCROLL LISTENER ***
         window.addEventListener('scroll', () => {
-            // For careers page, header starts scrolled. This logic is more for the main page.
             if (window.scrollY > 50) {
                 header.classList.add('scrolled');
             } else {
-                 // On the main page, the header is transparent at the top. On this page, we want it to stay opaque.
-                 // The initial CSS for `.header` on careers.css handles this, so we don't need a `remove` here unless we changed the CSS.
+                header.classList.remove('scrolled');
             }
         });
 
