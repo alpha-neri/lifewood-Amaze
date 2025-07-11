@@ -4,19 +4,13 @@ html {
 }
 
 /* --- Lifewood | Project Page Specific Styles --- */
-
-/* ✅ FIXED: Set the active link to a stable white color */
 .nav-menu .nav-link.active-page {
-    color: var(--white); /* Make it white by default, not yellow */
+    color: var(--white);
     font-weight: 700;
 }
-
-/* ✅ ADDED: Keep the active link white on hover to prevent it from turning yellow */
 .nav-menu .nav-link.active-page:hover {
     color: var(--white);
 }
-
-/* This rule correctly handles the scrolled state (no changes needed) */
 .header.scrolled .nav-menu .nav-link.active-page {
     color: var(--accent-primary);
 }
@@ -179,7 +173,6 @@ html {
     margin: 0;
     color: var(--white);
 }
-/* Style for the description paragraph */
 .project-card-description {
     font-size: 0.9rem;
     line-height: 1.5;
@@ -190,15 +183,146 @@ html {
     overflow: hidden;
     transition: opacity 0.3s ease, max-height 0.4s ease, margin-top 0.4s ease;
 }
-/* Reveal the description on card hover */
 .project-card:hover .project-card-description {
     opacity: 1;
     max-height: 100px;
     margin-top: 10px;
 }
-/* Responsive adjustment */
 @media (max-width: 768px) {
     .project-hero .slide-content h1 {
         font-size: 2.8rem;
+    }
+}
+
+/* Project Modal Styles */
+/* -------------------------------------------------- */
+body.modal-open {
+    overflow: hidden;
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 25, 30, 0.85);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content {
+    background-color: var(--white);
+    padding: 0;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 850px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.95) translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--white);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    z-index: 10;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.modal-close:hover {
+    background: var(--accent-secondary);
+    transform: rotate(90deg);
+}
+.modal-body {
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+/* --- Style for the image inside the modal --- */
+.modal-image {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    display: block;
+}
+
+.modal-header {
+    margin-bottom: 20px;
+}
+.modal-header .project-card-tags .tag {
+    background-color: rgba(4, 98, 65, 0.1);
+    border: 1px solid rgba(4, 98, 65, 0.2);
+    color: var(--dark-serpent);
+}
+.modal-header h2 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--dark-serpent);
+    margin-top: 15px;
+    line-height: 1.2;
+}
+.modal-body p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--gray);
+    margin-bottom: 1.5em;
+}
+.modal-details {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+.modal-details strong {
+    color: var(--dark-serpent);
+    font-weight: 600;
+}
+@media (max-width: 768px) {
+    .modal-content {
+        max-height: 85vh;
+    }
+    .modal-body {
+        padding: 25px;
+    }
+    .modal-header h2 {
+        font-size: 1.8rem;
     }
 }
