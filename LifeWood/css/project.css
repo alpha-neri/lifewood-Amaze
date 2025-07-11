@@ -4,10 +4,19 @@ html {
 }
 
 /* --- Lifewood | Project Page Specific Styles --- */
+
+/* ✅ FIXED: Set the active link to a stable white color */
 .nav-menu .nav-link.active-page {
-    color: var(--saffaron);
+    color: var(--white); /* Make it white by default, not yellow */
     font-weight: 700;
 }
+
+/* ✅ ADDED: Keep the active link white on hover to prevent it from turning yellow */
+.nav-menu .nav-link.active-page:hover {
+    color: var(--white);
+}
+
+/* This rule correctly handles the scrolled state (no changes needed) */
 .header.scrolled .nav-menu .nav-link.active-page {
     color: var(--accent-primary);
 }
@@ -150,8 +159,6 @@ html {
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.95) 100%);
     transition: background 0.4s ease;
 }
-
-/* ✅ FIXED: Made tag text color white */
 .project-card-tags .tag {
     margin-right: 8px;
     margin-bottom: 10px;
@@ -162,24 +169,21 @@ html {
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 4px;
     font-weight: 500;
-    color: var(--white); /* Ensures text is visible */
+    color: var(--white);
 }
-
-/* ✅ FIXED: Made title text color white */
 .project-card-title {
     font-family: 'Manrope', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
     line-height: 1.3;
     margin: 0;
-    color: var(--white); /* Ensures text is visible */
+    color: var(--white);
 }
 /* Style for the description paragraph */
 .project-card-description {
     font-size: 0.9rem;
     line-height: 1.5;
     color: var(--light-gray);
-    /* Hide it by default */
     opacity: 0;
     max-height: 0;
     margin-top: 0;
