@@ -56,7 +56,7 @@ img { max-width: 100%; height: auto; }
 section { padding: 100px 5%; }
 .container { max-width: 1200px; margin: 0 auto; }
 
-/* --- HEADER AND LOGO STYLES (DEFINITIVELY CORRECTED) --- */
+/* --- HEADER AND LOGO STYLES (COPIED FROM style.css) --- */
 .header {
     position: fixed;
     top: 0; left: 0; width: 100%; z-index: 1000;
@@ -76,6 +76,7 @@ section { padding: 100px 5%; }
     height: var(--nav-height); max-width: 1300px; margin: 0 auto; padding: 0 20px;
 }
 
+/* Visibility Improvement */
 .nav-logo, .nav-link, .nav-toggle {
     color: var(--text-light);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
@@ -94,16 +95,10 @@ section { padding: 100px 5%; }
 
 .logo-icon {
     display: inline-block; width: 0.7em; height: 1.0em;
-    background-color: var(--accent-secondary); /* This is the permanent yellow/saffron color. */
+    background-color: var(--accent-secondary);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-    transition: transform 0.3s ease; /* Removed background-color from transition */
+    transition: transform 0.3s ease;
 }
-
-/* 
-   The faulty ".header.scrolled .logo-icon" rule has been completely removed.
-   The hexagon's color is now static and will not change on scroll.
-*/
-
 .nav-logo:hover .logo-icon { transform: rotate(15deg); }
 .nav-menu { display: flex; align-items: center; list-style: none; gap: 35px; }
 .nav-link { font-family: var(--font-heading); font-weight: 600; position: relative; padding: 8px 0; letter-spacing: 0.02em; }
@@ -116,10 +111,12 @@ section { padding: 100px 5%; }
 .header.scrolled .nav-link:hover { color: var(--accent-primary); }
 .nav-link:hover::after { width: 100%; }
 
+/* ENHANCED CONTACT US BUTTON */
 .nav-link-btn {
     padding: 10px 25px;
     border-radius: 50px;
     font-weight: 700;
+    /* Default Ghost Button Style */
     background-color: transparent;
     border: 2px solid rgba(255, 255, 255, 0.9);
     color: var(--white);
@@ -135,6 +132,7 @@ section { padding: 100px 5%; }
     text-shadow: none;
 }
 
+/* Scrolled State for Button */
 .header.scrolled .nav-link-btn {
     background-color: var(--accent-primary);
     border-color: var(--accent-primary);
@@ -175,7 +173,6 @@ main { padding-top: var(--nav-height); }
 .btn-accent:hover { background-color: var(--accent-tertiary); border-color: var(--accent-tertiary); color: var(--text-dark); }
 
 /* --- CAREERS PAGE STYLES --- */
-
 #careers-hero {
     position: relative;
     padding: 140px 5% 120px;
@@ -183,7 +180,6 @@ main { padding-top: var(--nav-height); }
     color: var(--text-light);
     background: url('https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
 }
-
 #careers-hero::before {
     content: '';
     position: absolute;
@@ -194,19 +190,16 @@ main { padding-top: var(--nav-height); }
     background: linear-gradient(135deg, rgba(19, 48, 32, 0.92), rgba(4, 98, 65, 0.95));
     z-index: 1;
 }
-
 #careers-hero .container {
     position: relative;
     z-index: 2;
 }
-
 .careers-title {
     font-size: 3.5rem;
     font-weight: 800;
     color: var(--text-light);
     margin-bottom: 30px;
 }
-
 .careers-intro {
     font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.85);
@@ -214,17 +207,14 @@ main { padding-top: var(--nav-height); }
     margin: 0 auto;
     line-height: 1.7;
 }
-
 #why-join-us {
     background-color: var(--sea-salt);
 }
-
 .why-join-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 40px;
 }
-
 .why-join-card {
     background-color: var(--white);
     padding: 40px;
@@ -233,34 +223,28 @@ main { padding-top: var(--nav-height); }
     border-radius: 12px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .why-join-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 15px 30px rgba(19, 48, 32, 0.1);
 }
-
 .offer-icon {
     font-size: 3rem;
     color: var(--accent-primary);
     margin-bottom: 20px;
 }
-
 .core-values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; text-align: center; }
 .core-value-item .value-icon { font-size: 2.5rem; color: var(--accent-secondary); margin-bottom: 15px; display: inline-block; }
 .dark-section .core-value-item h4 { color: var(--text-light); }
 .dark-section .core-value-item p { color: rgba(255,255,255,0.7); }
 .core-value-item h4 { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; }
 .core-value-item p { font-size: 0.95rem; color: #555; line-height: 1.6; }
-
 #openings {
     background-color: var(--paper);
 }
-
 .job-listing-container {
     max-width: 900px;
     margin: 0 auto;
 }
-
 .job-post {
     display: flex;
     justify-content: space-between;
@@ -275,18 +259,15 @@ main { padding-top: var(--nav-height); }
     box-shadow: 0 5px 15px rgba(19, 48, 32, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .job-post:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 25px rgba(19, 48, 32, 0.1);
 }
-
 .job-details h4 {
     font-size: 1.4rem;
     font-weight: 600;
     margin: 0 0 8px 0;
 }
-
 .job-details span {
     color: #777;
     font-size: 0.95rem;
@@ -295,24 +276,20 @@ main { padding-top: var(--nav-height); }
     gap: 15px;
     flex-wrap: wrap;
 }
-
 .job-details span i {
     color: var(--accent-primary);
     margin-right: -8px;
 }
-
 .btn-outline {
     background-color: transparent;
     color: var(--accent-primary);
     border: 2px solid var(--accent-primary);
 }
-
 .btn-outline:hover {
     background-color: var(--accent-primary);
     color: var(--text-light);
     border-color: var(--accent-primary);
 }
-
 .openings-cta {
     text-align: center;
     max-width: 900px;
@@ -320,19 +297,16 @@ main { padding-top: var(--nav-height); }
     padding-top: 60px;
     border-top: 1px solid rgba(19, 48, 32, 0.15);
 }
-
 .openings-cta h2 {
     font-size: 2.5rem;
     color: var(--text-dark);
     margin-bottom: 20px;
 }
-
 .openings-cta p {
     color: #555;
     max-width: 600px;
     margin: 0 auto 30px auto;
 }
-
 .footer { background-color: var(--bg-dark); color: var(--text-light); padding: 80px 5% 0; }
 .footer-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 50px; padding-bottom: 50px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 .footer-widget h4 { font-size: 1.3rem; font-weight: 600; color: var(--text-light); margin-bottom: 25px; position: relative; padding-bottom: 10px; }
@@ -354,22 +328,21 @@ main { padding-top: var(--nav-height); }
 .footer-bottom-bar { display: flex; justify-content: space-between; align-items: center; padding: 25px 0; flex-wrap: wrap; gap: 15px; }
 .copyright { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); }
 .footer .footer-final-tagline { font-style: italic; color: var(--earth-yellow); font-size: 1rem; }
-
-/* --- UTILITIES & RESPONSIVE DESIGN --- */
 .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+/* Responsive styles for tablet and smaller */
 @media (max-width: 992px) {
     .job-listing-container {
         padding: 0 15px;
     }
 }
 
+/* Responsive styles for mobile */
 @media (max-width: 768px) {
     html { font-size: 15px; }
     section { padding: 80px 5%; }
     main { padding-top: 70px; }
-    
     .header { background: var(--white); box-shadow: 0 2px 10px rgba(19, 48, 32, 0.08); backdrop-filter: none; }
     .navbar { height: 70px; }
     .nav-menu {
@@ -378,7 +351,7 @@ main { padding-top: var(--nav-height); }
         gap: 20px; text-align: center; transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     }
     .nav-menu.active { left: 0; }
-    .nav-link { display: block; padding: 15px; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
+    .nav-link { display: block; padding: 15px; font-size: 1.5rem; font-weight: 700; }
     .nav-link::after { display: none; }
     .nav-link-btn { padding: 15px 30px; font-size: 1.2rem; }
     .nav-toggle { display: block; color: var(--text-dark); text-shadow: none; }
@@ -390,6 +363,5 @@ main { padding-top: var(--nav-height); }
     .job-post { flex-direction: column; align-items: flex-start; padding: 25px; }
     .job-post .btn-outline { width: 100%; text-align: center; margin-top: 15px; }
     .openings-cta h2 { font-size: 2rem; }
-
     .footer-bottom-bar { justify-content: center; }
 }
