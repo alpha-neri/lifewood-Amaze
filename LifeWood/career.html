@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career | Lifewood</title>
+    <title data-en="Careers | Lifewood" data-zh="招聘 | Lifewood">Careers | Lifewood</title>
 
     <link rel="icon" href="lifewood.svg" type="image/svg+xml">
     <!-- Google Fonts -->
@@ -15,24 +15,33 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Link to the careers.css file -->
+    <!-- CSS links (including your original career.css) -->
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/career.css">
 </head>
 <body>
 
-    <!-- REUSED Header & Navigation -->
+    <!-- ENHANCED Header & Navigation -->
     <header class="header">
         <nav class="navbar">
             <a href="index.html#home" class="nav-logo">
                 <span class="logo-icon"></span>lifewood
             </a>
             <ul class="nav-menu">
-               <li><a href="index.html#home" class="nav-link">Home</a></li>
-                <li><a href="index.html#solutions" class="nav-link">Services</a></li>
-                <li><a href="index.html#news" class="nav-link">News</a></li>
-                <li><a href="project.html" class="nav-link">Project</a></li>
-                <li><a href="career.html" class="nav-link">Career</a></li>
-                <li><a href="index.html#contact" class="nav-link-btn btn">Contact Us</a></li>
+                <li><a href="index.html#home" class="nav-link" data-en="Home" data-zh="首页">Home</a></li>
+                <li><a href="index.html#solutions" class="nav-link" data-en="Services" data-zh="服务">Services</a></li>
+                <li><a href="index.html#news" class="nav-link" data-en="News" data-zh="新闻">News</a></li>
+                <li><a href="project.html" class="nav-link" data-en="Project" data-zh="项目">Project</a></li>
+                <li><a href="career.html" class="nav-link active-page" data-en="Career" data-zh="招聘">Career</a></li>
+                <li><a href="index.html#contact" class="nav-link-btn btn" data-en="Contact Us" data-zh="联系我们">Contact Us</a></li>
+                <!-- Language Switcher Added -->
+                <li>
+                    <div class="language-switcher">
+                        <button class="lang-btn" data-lang="en">EN</button>
+                        <span class="lang-separator">/</span>
+                        <button class="lang-btn" data-lang="zh">中文</button>
+                    </div>
+                </li>
             </ul>
             <div class="nav-toggle" id="nav-toggle">
                 <i class="fas fa-bars"></i>
@@ -44,8 +53,8 @@
         <!-- 1. CAREERS HERO SECTION -->
         <section id="careers-hero" class="dark-section">
             <div class="container fade-in">
-                <h1 class="careers-title">Become Part of Our Innovation Journey</h1>
-                <p class="careers-intro">
+                <h1 class="careers-title" data-en="Become Part of Our Innovation Journey" data-zh="成为我们创新之旅的一部分">Become Part of Our Innovation Journey</h1>
+                <p class="careers-intro" data-en="Innovation, adaptability, and the rapid development of new services separate companies that constantly deliver at the highest level from their competitors. This means motivating and growing teams that can initiate and learn on the run to deliver evolving technologies and targets. It’s a big challenge, but innovation—especially across borders—has never been the easy path." data-zh="创新、适应能力以及新服务的快速发展，将持续在最高水平上交付的公司与其竞争对手区分开来。这意味着激励和培养能够在实践中主动学习、交付不断发展的技术和目标的团队。这是一个巨大的挑战，但创新——尤其是跨国界的创新——从来都不是一条轻松的道路。">
                     Innovation, adaptability, and the rapid development of new services separate companies that constantly deliver at the highest level from their competitors. 
                     This means motivating and growing teams that can initiate and learn on the run to deliver evolving technologies and targets. 
                     It’s a big challenge, but innovation—especially across borders—has never been the easy path.
@@ -56,24 +65,24 @@
         <!-- 2. WHY JOIN US SECTION -->
         <section id="why-join-us" class="fade-in">
             <div class="container">
-                <h2 class="section-title">Why Lifewood?</h2>
-                <p class="section-subtitle">We are more than a company; we are a collective of innovators and problem-solvers dedicated to pushing the boundaries of technology.</p>
+                <h2 class="section-title" data-en="Why Lifewood?" data-zh="为何选择Lifewood？">Why Lifewood?</h2>
+                <p class="section-subtitle" data-en="We are more than a company; we are a collective of innovators and problem-solvers dedicated to pushing the boundaries of technology." data-zh="我们不仅仅是一家公司；我们是一个由创新者和问题解决者组成的集体，致力于推动技术边界。">We are more than a company; we are a collective of innovators and problem-solvers dedicated to pushing the boundaries of technology.</p>
                 
                 <div class="why-join-grid">
                     <div class="why-join-card">
                         <div class="offer-icon"><i class="fas fa-lightbulb"></i></div>
-                        <h3>Drive Innovation</h3>
-                        <p>Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact.</p>
+                        <h3 data-en="Drive Innovation" data-zh="驱动创新">Drive Innovation</h3>
+                        <p data-en="Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact." data-zh="在重新定义行业并创造实际影响的项目中，与尖端的AI和数据技术合作。">Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact.</p>
                     </div>
                     <div class="why-join-card">
                         <div class="offer-icon"><i class="fas fa-arrow-trend-up"></i></div>
-                        <h3>Accelerate Your Growth</h3>
-                        <p>We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement.</p>
+                        <h3 data-en="Accelerate Your Growth" data-zh="加速你的成长">Accelerate Your Growth</h3>
+                        <p data-en="We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement." data-zh="我们通过持续的学习机会、导师指导和清晰的职业发展路径来投资于您的发展。">We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement.</p>
                     </div>
                     <div class="why-join-card">
                         <div class="offer-icon"><i class="fas fa-globe"></i></div>
-                        <h3>Collaborate Globally</h3>
-                        <p>Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things.</p>
+                        <h3 data-en="Collaborate Globally" data-zh="全球协作">Collaborate Globally</h3>
+                        <p data-en="Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things." data-zh="加入一个多元化的跨国团队，在这里，独特的视角汇聚一堂，解决复杂的挑战，共创非凡。">Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things.</p>
                     </div>
                 </div>
             </div>
@@ -82,28 +91,28 @@
         <!-- 3. OUR VALUES SECTION -->
         <section id="our-values" class="dark-section fade-in">
             <div class="container">
-                <h2 class="section-title">The DNA of Our Team</h2>
-                <p class="section-subtitle">These are the values that guide our decisions, our collaborations, and our commitment to excellence.</p>
+                <h2 class="section-title" data-en="The DNA of Our Team" data-zh="我们团队的DNA">The DNA of Our Team</h2>
+                <p class="section-subtitle" data-en="These are the values that guide our decisions, our collaborations, and our commitment to excellence." data-zh="这些是指导我们决策、合作和追求卓越承诺的价值观。">These are the values that guide our decisions, our collaborations, and our commitment to excellence.</p>
                 <div class="core-values-grid">
                     <div class="core-value-item">
                         <span class="value-icon"><i class="fas fa-rocket"></i></span>
-                        <h4>Innovation</h4>
-                        <p>We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions.</p>
+                        <h4 data-en="Innovation" data-zh="创新">Innovation</h4>
+                        <p data-en="We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions." data-zh="我们被好奇心和对寻找更好、更智能、更有效解决方案的不懈渴望所驱动。">We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions.</p>
                     </div>
                     <div class="core-value-item">
                         <span class="value-icon"><i class="fas fa-person-running"></i></span>
-                        <h4>Agility</h4>
-                        <p>We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets.</p>
+                        <h4 data-en="Agility" data-zh="敏捷">Agility</h4>
+                        <p data-en="We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets." data-zh="我们迅速适应，拥抱变化，并在快节奏的环境中茁壮成长，以实现宏伟目标。">We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets.</p>
                     </div>
                     <div class="core-value-item">
                         <span class="value-icon"><i class="fas fa-users-gear"></i></span>
-                        <h4>Collaboration</h4>
-                        <p>We believe the best ideas are born from teamwork, open communication, and mutual respect.</p>
+                        <h4 data-en="Collaboration" data-zh="协作">Collaboration</h4>
+                        <p data-en="We believe the best ideas are born from teamwork, open communication, and mutual respect." data-zh="我们相信最好的想法源于团队合作、开放沟通和相互尊重。">We believe the best ideas are born from teamwork, open communication, and mutual respect.</p>
                     </div>
                     <div class="core-value-item">
                         <span class="value-icon"><i class="fas fa-earth-americas"></i></span>
-                        <h4>Global Impact</h4>
-                        <p>We aim to create technology that not only serves clients but also contributes positively to the global community.</p>
+                        <h4 data-en="Global Impact" data-zh="全球影响">Global Impact</h4>
+                        <p data-en="We aim to create technology that not only serves clients but also contributes positively to the global community." data-zh="我们旨在创造不仅服务于客户，还能为全球社区做出积极贡献的技术。">We aim to create technology that not only serves clients but also contributes positively to the global community.</p>
                     </div>
                 </div>
             </div>
@@ -112,49 +121,49 @@
         <!-- 4. OPENINGS & CTA SECTION (COMBINED) -->
         <section id="openings" class="fade-in">
             <div class="container">
-                <h2 class="section-title">Current Openings</h2>
-                <p class="section-subtitle">Find your next challenge. Explore our open roles and discover where you fit in our global team.</p>
+                <h2 class="section-title" data-en="Current Openings" data-zh="当前职位空缺">Current Openings</h2>
+                <p class="section-subtitle" data-en="Find your next challenge. Explore our open roles and discover where you fit in our global team." data-zh="寻找你的下一个挑战。探索我们的空缺职位，发现你在我们全球团队中的位置。">Find your next challenge. Explore our open roles and discover where you fit in our global team.</p>
                 
                 <div class="job-listing-container">
                     <!-- Job Post 1 -->
                     <div class="job-post">
                         <div class="job-details">
-                            <h4>Senior AI Engineer</h4>
-                            <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> Full-time</span>
+                            <h4 data-en="Senior AI Engineer" data-zh="高级AI工程师">Senior AI Engineer</h4>
+                            <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> <span data-en="Full-time" data-zh="全职">Full-time</span></span>
                         </div>
-                        <a href="#" class="btn btn-outline">Apply Now</a>
+                        <a href="#" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
                     </div>
                     <!-- Job Post 2 -->
                     <div class="job-post">
                         <div class="job-details">
-                            <h4>UX/UI Designer</h4>
-                            <span><i class="fas fa-map-marker-alt"></i> Remote | <i class="fas fa-briefcase"></i> Full-time</span>
+                            <h4 data-en="UX/UI Designer" data-zh="用户体验/界面设计师">UX/UI Designer</h4>
+                            <span><i class="fas fa-map-marker-alt"></i> Remote | <i class="fas fa-briefcase"></i> <span data-en="Full-time" data-zh="全职">Full-time</span></span>
                         </div>
-                        <a href="#" class="btn btn-outline">Apply Now</a>
+                        <a href="#" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
                     </div>
                     <!-- Job Post 3 -->
                     <div class="job-post">
                         <div class="job-details">
-                            <h4>Data Annotation Specialist</h4>
-                             <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> Project-based</span>
+                            <h4 data-en="Data Annotation Specialist" data-zh="数据标注专员">Data Annotation Specialist</h4>
+                             <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> <span data-en="Project-based" data-zh="项目制">Project-based</span></span>
                         </div>
-                        <a href="#" class="btn btn-outline">Apply Now</a>
+                        <a href="#" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
                     </div>
                      <!-- Job Post 4 -->
                      <div class="job-post">
                         <div class="job-details">
-                            <h4>Project Manager</h4>
-                            <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> Full-time</span>
+                            <h4 data-en="Project Manager" data-zh="项目经理">Project Manager</h4>
+                            <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> <span data-en="Full-time" data-zh="全职">Full-time</span></span>
                         </div>
-                        <a href="#" class="btn btn-outline">Apply Now</a>
+                        <a href="#" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
                     </div>
                 </div>
 
                 <!-- NEW CTA block within the same section -->
                 <div class="openings-cta">
-                    <h2>Don't see the right role for you?</h2>
-                    <p>We are always looking for passionate and talented individuals to join our mission. If you believe you have what it takes, we'd love to hear from you.</p>
-                    <a href="mailto:info.ph@lifewood.com" class="btn btn-accent">Submit Your CV</a>
+                    <h2 data-en="Don't see the right role for you?" data-zh="没有找到适合你的职位？">Don't see the right role for you?</h2>
+                    <p data-en="We are always looking for passionate and talented individuals to join our mission. If you believe you have what it takes, we'd love to hear from you." data-zh="我们一直在寻找充满激情和才华的人才加入我们的使命。如果你相信自己具备所需的能力，我们很乐意听到你的消息。">We are always looking for passionate and talented individuals to join our mission. If you believe you have what it takes, we'd love to hear from you.</p>
+                    <a href="mailto:info.ph@lifewood.com" class="btn btn-accent" data-en="Submit Your CV" data-zh="提交您的简历">Submit Your CV</a>
                 </div>
 
             </div>
@@ -171,7 +180,7 @@
                     <a href="index.html#home" class="nav-logo">
                         <span class="logo-icon"></span>lifewood
                     </a>
-                    <p class="footer-tagline">Always switch on never off</p>
+                    <p class="footer-tagline" data-en="Always switch on never off" data-zh="永不关机，时刻在线">Always switch on never off</p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/LifewoodPH" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                         <a href="https://www.youtube.com/@LifewoodDataTechnology" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
@@ -181,193 +190,89 @@
     
                 <!-- Quick Links Widget -->
                 <div class="footer-widget footer-links">
-                    <h4>Quick Links</h4>
+                    <h4 data-en="Quick Links" data-zh="快速链接">Quick Links</h4>
                     <ul>
-                        <li><a href="index.html#home">Home</a></li>
-                        <li><a href="index.html#about">About Us</a></li>
-                        <li><a href="index.html#solutions">Services</a></li>
-                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="index.html#home" data-en="Home" data-zh="首页">Home</a></li>
+                        <li><a href="index.html#about" data-en="About Us" data-zh="关于我们">About Us</a></li>
+                        <li><a href="index.html#solutions" data-en="Services" data-zh="服务">Services</a></li>
+                        <li><a href="index.html#contact" data-en="Contact" data-zh="联系">Contact</a></li>
                     </ul>
                 </div>
     
                 <!-- Newsletter Widget -->
                 <div class="footer-widget footer-newsletter">
-                    <h4>Join Our Newsletter</h4>
-                    <p>Get the latest insights on branding, AI, and design delivered to your inbox.</p>
+                    <h4 data-en="Join Our Newsletter" data-zh="加入我们的简报">Join Our Newsletter</h4>
+                    <p data-en="Get the latest insights on AI, and design delivered to your inbox." data-zh="获取关于AI和设计的最新见解，发送至您的收件箱。">Get the latest insights on AI, and design delivered to your inbox.</p>
                     <form class="footer-newsletter-form">
-                        <input type="email" placeholder="Enter your email" required>
+                        <input type="email" required data-en-placeholder="Enter your email" data-zh-placeholder="输入您的邮箱" placeholder="Enter your email">
                         <button type="submit" aria-label="Subscribe"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </div>
     
             <div class="footer-bottom-bar">
-                <p class="copyright">© 2025 Lifewood. All Rights Reserved.</p>
-                <p class="footer-final-tagline">Be Amaze.</p>
+                <p class="copyright" data-en="© 2025 Lifewood. All Rights Reserved." data-zh="© 2025 Lifewood. 版权所有。">© 2025 Lifewood. All Rights Reserved.</p>
+                <p class="footer-final-tagline" data-en="Be Amaze." data-zh="感受惊喜。">Be Amaze.</p>
             </div>
         </div>
     </footer>
 
-    <!-- SCRIPT BLOCK - IDENTICAL TO INDEX.HTML -->
+    <!-- SCRIPT BLOCK - For Nav & Animations -->
     <script>
         const navToggle = document.getElementById('nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
         const header = document.querySelector('.header');
 
-        // Mobile Nav Toggle
-        navToggle.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            navMenu.classList.toggle('active'); 
-            navToggle.classList.toggle('active');
-        });
+        navToggle.addEventListener('click', (e) => { e.stopPropagation(); navMenu.classList.toggle('active'); navToggle.classList.toggle('active'); });
+        document.querySelectorAll('.nav-menu a:not(.lang-btn)').forEach(link => { link.addEventListener('click', () => { if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } }); });
+        document.addEventListener('click', (e) => { if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !navToggle.contains(e.target)) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } });
+        window.addEventListener('scroll', () => { window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled'); });
 
-        // Close Mobile Nav on Link Click
-        document.querySelectorAll('.nav-menu a').forEach(link => { 
-            link.addEventListener('click', () => { 
-                if (navMenu.classList.contains('active')) { 
-                    navMenu.classList.remove('active'); 
-                    navToggle.classList.remove('active'); 
-                } 
-            }); 
-        });
-        
-        // Close Mobile Nav on Outside Click
-        document.addEventListener('click', (e) => { 
-            if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !navToggle.contains(e.target)) { 
-                navMenu.classList.remove('active'); 
-                navToggle.classList.remove('active'); 
-            } 
-        });
-
-        // *** THIS IS THE CORRECTED SCROLL LISTENER ***
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        // Fade-in Animation on Scroll
         const faders = document.querySelectorAll('.fade-in');
         const appearOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
         const appearOnScroll = new IntersectionObserver(function(entries, appearOnScrollObserver) {
             entries.forEach(entry => {
                 if (!entry.isIntersecting) { return; } 
-                else { 
-                    entry.target.classList.add('visible'); 
-                    appearOnScrollObserver.unobserve(entry.target); 
-                }
+                else { entry.target.classList.add('visible'); appearOnScrollObserver.unobserve(entry.target); }
             });
         }, appearOptions);
         faders.forEach(fader => { appearOnScroll.observe(fader); });
+    </script>
+    <!-- SCRIPT BLOCK - For Language Switching -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-btn');
 
-        // --- HERO SLIDER SCRIPT --- (Included for consistency, will not run if elements are not found)
-        const heroSlider = document.querySelector('.hero-slider .slider-container');
-        if (heroSlider) {
-
-            const firstSlide = heroSlider.querySelector('.slide');
-            firstSlide.classList.remove('active');
-            setTimeout(() => {
-                firstSlide.classList.add('active');
-            }, 500);
-
-            const sliderWrapper = heroSlider.querySelector('.slider-wrapper');
-            const slides = heroSlider.querySelectorAll('.slide');
-            const prevBtn = heroSlider.querySelector('.prev');
-            const nextBtn = heroSlider.querySelector('.next');
-            const dotsContainer = heroSlider.querySelector('.slider-dots');
-            let currentIndex = 0;
-            let slideInterval;
-
-            if (slides.length > 0) {
-                slides.forEach((_, i) => {
-                    const dot = document.createElement('span');
-                    dot.classList.add('dot');
-                    if (i === 0) dot.classList.add('active');
-                    dot.addEventListener('click', () => {
-                        goToSlide(i);
-                        resetInterval();
-                    });
-                    dotsContainer.appendChild(dot);
-                });
-
-                const dots = dotsContainer.querySelectorAll('.dot');
-
-                function goToSlide(index) {
-                    if (currentIndex === index) return;
-                    
-                    slides[currentIndex].classList.remove('active');
-                    currentIndex = index;
-                    slides[currentIndex].classList.add('active');
-                    
-                    sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
-                    
-                    dots.forEach((dot, i) => {
-                        dot.classList.toggle('active', i === currentIndex);
-                    });
+        const setLanguage = (lang) => {
+            document.documentElement.lang = lang;
+            const elementsToTranslate = document.querySelectorAll('[data-en], [data-en-placeholder]');
+            
+            elementsToTranslate.forEach(el => {
+                if (el.dataset.en) {
+                    el.innerHTML = el.dataset[lang] || el.dataset['en'];
                 }
-
-                function nextSlide() {
-                    const newIndex = (currentIndex + 1) % slides.length;
-                    goToSlide(newIndex);
+                if (el.dataset.enPlaceholder) {
+                    el.placeholder = el.dataset[`${lang}Placeholder`] || el.dataset['enPlaceholder'];
                 }
+            });
 
-                function prevSlide() {
-                    const newIndex = (currentIndex - 1 + slides.length) % slides.length;
-                    goToSlide(newIndex);
-                }
-                
-                function startInterval() {
-                    slideInterval = setInterval(nextSlide, 7000);
-                }
-                
-                function resetInterval() {
-                    clearInterval(slideInterval);
-                    startInterval();
-                }
+            langButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            
+            localStorage.setItem('lifewoodLang', lang);
+        };
 
-                nextBtn.addEventListener('click', () => {
-                    nextSlide();
-                    resetInterval();
-                });
+        const savedLang = localStorage.getItem('lifewoodLang') || 'en';
+        setLanguage(savedLang);
 
-                prevBtn.addEventListener('click', () => {
-                    prevSlide();
-                    resetInterval();
-                });
-                
-                startInterval();
-            }
-        }
-
-        // --- SCRIPT FOR 'WHO WE ARE' SECTION --- (Included for consistency, will not run if elements are not found)
-        document.addEventListener('DOMContentLoaded', () => {
-            const options = {
-                root: null, 
-                rootMargin: '0px',
-                threshold: 0.2 
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, options);
-
-            const leftColumn = document.querySelector('.about-left-column');
-            const rightColumn = document.querySelector('.about-right-column');
-
-            if (leftColumn) {
-                observer.observe(leftColumn);
-            }
-            if (rightColumn) {
-                observer.observe(rightColumn);
-            }
+        langButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent page jump if it's an anchor tag
+                setLanguage(button.dataset.lang);
+            });
         });
+    });
     </script>
 </body>
 </html>
