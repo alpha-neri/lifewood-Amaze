@@ -2,15 +2,48 @@
 /*      DEDICATED STYLES FOR JOB APPLICATIONS PAGE           */
 /* ========================================================= */
 
-:root {
-    --accent-primary: #046241;
-    --dark-serpent: #133020;
-    --saffaron: #FFB347;
-    --sea-salt: #f8f9fa;
-    --white: #ffffff;
-    --text-dark: #212529;
-    --border-color: #e9ecef;
+/* === Pre-Authentication Loader === */
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--sea-salt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent-primary);
+    animation: spin 1s linear infinite;
+}
+
+/* Hide admin content by default to prevent flashing */
+.admin-wrapper {
+    visibility: hidden;
+}
+
+.admin-wrapper.visible {
+    visibility: visible;
+}
+
 
 /* === KEYFRAME ANIMATIONS === */
 @keyframes fadeInUp {
@@ -22,9 +55,19 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* === Base Variables === */
+:root {
+    --accent-primary: #046241;
+    --dark-serpent: #133020;
+    --saffaron: #FFB347;
+    --sea-salt: #f8f9fa;
+    --white: #ffffff;
+    --text-dark: #212529;
+    --border-color: #e9ecef;
+}
+
 /* === GLOBAL & FONT STYLES === */
 body { background-color: var(--sea-salt); font-family: 'Manrope', sans-serif; margin: 0; }
-.admin-wrapper { display: flex; min-height: 100vh; }
 .swal2-popup { font-family: 'Manrope', sans-serif; }
 
 /* === SIDEBAR & LOGO === */
