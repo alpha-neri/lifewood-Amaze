@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- Link to your external CSS file -->
     <link rel="stylesheet" href="css/JobApplication.css">
 
     <!-- External Libraries -->
@@ -19,7 +20,13 @@
     <script src="js/firebase-config.js"></script>
 </head>
 <body>
-    <div class="admin-wrapper">
+    <!-- Pre-Authentication Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Main Admin Wrapper (Initially Hidden) -->
+    <div class="admin-wrapper" id="admin-wrapper">
         <!-- Sidebar -->
         <aside class="admin-sidebar" id="sidebar">
             <div class="sidebar-header"><a href="index.html" class="nav-logo"><span class="logo-icon"></span>lifewood</a></div>
@@ -98,12 +105,17 @@
         const db = getFirestore(app);
 
         // --- AUTHENTICATION GATEKEEPER ---
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const adminWrapper = document.getElementById('admin-wrapper');
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in, so we can initialize the page logic.
+                // User is signed in. Hide the loader and show the protected content.
+                loadingOverlay.classList.add('hidden');
+                adminWrapper.classList.add('visible');
                 initializePage(user);
             } else {
-                // User is not signed in, redirect them to the login page.
+                // User is not signed in. The content remains hidden, and we redirect.
                 window.location.href = 'admin.html';
             }
         });
