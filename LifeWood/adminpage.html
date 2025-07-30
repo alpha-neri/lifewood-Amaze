@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifewood | Admin Dashboard</title>
+    <link rel="icon" href="lifewood.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Link to your single, complete CSS file -->
+    <link rel="stylesheet" href="css/adminpage.css">
+    
+    <!-- SweetAlert2 for modern alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Load Firebase Config Separately -->
+    <script src="js/firebase-config.js"></script>
+
+</head>
+<body>
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header"><a href="index.html" class="nav-logo"><span class="logo-icon"></span>lifewood</a></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="adminpage.html" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="JobApplication.html"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
+                    <li><a href="news-management.html"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer"><a class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="user-profile"><span>Welcome, Admin</span><div class="avatar"><i class="fas fa-user"></i></div></div>
+            </header>
+
+            <!-- STATS SECTION -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-applicants-stat">0</span>
+                        <span class="stat-title">Total Applicants</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-accepted"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="accepted-stat">0</span>
+                        <span class="stat-title">Accepted</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="rejected-stat">0</span>
+                        <span class="stat-title">Rejected</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="pending-stat">0</span>
+                        <span class="stat-title">Pending Review</span>
+                    </div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-icon icon-positions"><i class="fas fa-briefcase"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="positions-stat">0</span>
+                        <span class="stat-title">Unique Positions</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-panel">
+                <div class="panel-header"><h3>Recent Job Applications</h3></div>
+                <div class="table-responsive">
+                    <table id="applications-table">
+                        <thead>
+                            <tr>
+                                <th>Applicant Name</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- VIEW-ONLY DETAILS MODAL -->
+    <div class="modal-overlay" id="view-details-modal-overlay">
+        <div class="modal" id="view-details-modal">
+            <div class="modal-header"><h3>Application Details</h3><button class="modal-close" id="view-details-close-btn">×</button></div>
+            <div class="modal-body details-modal-body">
+                <div class="detail-field"><span class="detail-label">Full Name</span><span class="detail-value" id="detail-name">-</span></div>
+                <div class="detail-field"><span class="detail-label">Email</span><span class="detail-value" id="detail-email">-</span></div>
+                <div class="detail-field"><span class="detail-label">Age</span><span class="detail-value" id="detail-age">-</span></div>
+                <div class="detail-field"><span class="detail-label">Highest Degree</span><span class="detail-value" id="detail-degree">-</span></div>
+                <div class="detail-field"><span class="detail-label">Resume Link</span><span class="detail-value" id="detail-resume">-</span></div>
+                <div class="detail-field"><span class="detail-label">Available From</span><span class="detail-value" id="detail-available-from">-</span></div>
+                <div class="detail-field"><span class="detail-label">Available To</span><span class="detail-value" id="detail-available-to">-</span></div>
+                <div class="detail-field"><span class="detail-label">Relevant Experience</span><div class="detail-value-experience" id="detail-experience">-</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                initializeDashboard(user);
+            } else {
+                window.location.href = 'admin.html';
+            }
+        });
+
+        function initializeDashboard(user) {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const logoutBtn = document.querySelector('.logout-btn');
+            const tableBody = document.querySelector('#applications-table tbody');
+            const appCountBadge = document.getElementById('application-count-badge');
+            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
+            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
+            const mainContent = document.querySelector('.main-content');
+            const totalApplicantsStat = document.getElementById('total-applicants-stat');
+            const acceptedStat = document.getElementById('accepted-stat');
+            const rejectedStat = document.getElementById('rejected-stat');
+            const pendingStat = document.getElementById('pending-stat');
+            const positionsStat = document.getElementById('positions-stat');
+            
+            mobileMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
+            mainContent.addEventListener('click', () => { if (sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Logout?', icon: 'question', showCancelButton: true,
+                    confirmButtonText: 'Yes, Logout', cancelButtonText: 'Cancel'
+                }).then((result) => { if (result.isConfirmed) { signOut(auth); } });
+            });
+
+            const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
+            const closeViewDetailsModal = () => viewDetailsModalOverlay.classList.remove('active');
+            viewDetailsCloseBtn.addEventListener('click', closeViewDetailsModal);
+            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) closeViewDetailsModal(); });
+            
+            tableBody.addEventListener('click', async (e) => {
+                const targetButton = e.target.closest('button.view-details');
+                if (!targetButton) return;
+                const docId = targetButton.dataset.id;
+                const docRef = doc(db, "job-applications", docId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const appData = docSnap.data();
+                    document.getElementById('detail-name').textContent = `${appData.firstName} ${appData.lastName}`;
+                    document.getElementById('detail-email').textContent = appData.email || 'N/A';
+                    document.getElementById('detail-age').textContent = appData.age || 'N/A';
+                    document.getElementById('detail-degree').textContent = appData.degree || 'N/A';
+                    document.getElementById('detail-experience').textContent = appData.experience || 'Not provided';
+                    document.getElementById('detail-available-from').textContent = appData.availableFrom || 'N/A';
+                    document.getElementById('detail-available-to').textContent = appData.availableTo || 'Not specified';
+                    document.getElementById('detail-resume').innerHTML = `<a href="${appData.resumeLink}" target="_blank">${appData.resumeLink}</a>`;
+                    openViewDetailsModal();
+                } else {
+                    Swal.fire('Error', 'Could not find the application details.', 'error');
+                }
+            });
+
+            const q = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
+            onSnapshot(q, (snapshot) => {
+                tableBody.innerHTML = ''; 
+                appCountBadge.textContent = snapshot.size;
+                let acceptedCount = 0;
+                let rejectedCount = 0;
+                let pendingCount = 0;
+                const positions = new Set();
+                if (snapshot.empty) {
+                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No applications found.</td></tr>`;
+                } else {
+                    snapshot.docs.forEach((docSnapshot, index) => {
+                        const app = docSnapshot.data();
+                        const status = app.status || 'pending';
+                        switch(status) {
+                            case 'accepted': acceptedCount++; break;
+                            case 'rejected': rejectedCount++; break;
+                            case 'pending': pendingCount++; break;
+                        }
+                        if (app.position) positions.add(app.position);
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${app.firstName} ${app.lastName}</td>
+                            <td>${app.position}</td>
+                            <td><span class="status-badge status-${status}">${status}</span></td>
+                            <td><div class="action-buttons"><button class="btn-action view-details" data-id="${docSnapshot.id}"><i class="fas fa-eye"></i> View</button></div></td>
+                        `;
+                        tr.style.animationDelay = `${index * 50}ms`;
+                        tr.classList.add('row-visible');
+                        tableBody.appendChild(tr);
+                    });
+                }
+                totalApplicantsStat.textContent = snapshot.size;
+                acceptedStat.textContent = acceptedCount;
+                rejectedStat.textContent = rejectedCount;
+                pendingStat.textContent = pendingCount;
+                positionsStat.textContent = positions.size;
+            }, (error) => {
+                console.error("Error fetching applications:", error);
+                Swal.fire('Database Error', 'Could not fetch applications from the database.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

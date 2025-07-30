@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Applications | Lifewood Admin</title>
+    <link rel="icon" href="lifewood.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/JobApplication.css">
+
+    <!-- External Libraries -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Load Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header"><a href="index.html" class="nav-logo"><span class="logo-icon"></span>lifewood</a></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="adminpage.html"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="JobApplication.html" class="active"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
+                    <li><a href="news-management.html"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer"><a class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+                    <h1>Manage Job Applications</h1>
+                </div>
+                <div class="user-profile"><span>Welcome, Admin</span><div class="avatar"><i class="fas fa-user"></i></div></div>
+            </header>
+
+            <section class="content-panel">
+                <div class="panel-header"><h3>All Applications</h3></div>
+                <div class="table-responsive">
+                    <table id="applications-table">
+                        <thead>
+                            <tr>
+                                <th>Applicant Name</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- VIEW DETAILS MODAL -->
+    <div class="modal-overlay" id="view-details-modal-overlay">
+        <!-- Modal content remains the same -->
+        <div class="modal" id="view-details-modal">
+            <div class="modal-header">
+                <h3>Application Details</h3>
+                <button class="modal-close" id="view-details-close-btn">×</button>
+            </div>
+            <div class="modal-body details-modal-body">
+                <div class="detail-field"><span class="detail-label">Full Name</span><span class="detail-value" id="detail-name">-</span></div>
+                <div class="detail-field"><span class="detail-label">Email</span><span class="detail-value" id="detail-email">-</span></div>
+                <div class="detail-field"><span class="detail-label">Age</span><span class="detail-value" id="detail-age">-</span></div>
+                <div class="detail-field"><span class="detail-label">Highest Degree</span><span class="detail-value" id="detail-degree">-</span></div>
+                <div class="detail-field"><span class="detail-label">Resume Link</span><span class="detail-value" id="detail-resume">-</span></div>
+                <div class="detail-field"><span class="detail-label">Available From</span><span class="detail-value" id="detail-available-from">-</span></div>
+                <div class="detail-field"><span class="detail-label">Available To</span><span class="detail-value" id="detail-available-to">-</span></div>
+                <div class="detail-field">
+                    <span class="detail-label">Relevant Experience</span>
+                    <div class="detail-value-experience" id="detail-experience">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- AUTHENTICATION GATEKEEPER ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, so we can initialize the page logic.
+                initializePage(user);
+            } else {
+                // User is not signed in, redirect them to the login page.
+                window.location.href = 'admin.html';
+            }
+        });
+
+        // --- All page logic is now wrapped in this function ---
+        function initializePage(user) {
+            emailjs.init('yXnRaoxKZm9Y31L2-');
+
+            const tableBody = document.querySelector('#applications-table tbody');
+            const appCountBadge = document.getElementById('application-count-badge');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const logoutBtn = document.querySelector('.logout-btn');
+            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
+            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
+
+            mobileMenuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+
+            // UPDATE: Logout button now uses Firebase signOut
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure you want to logout?', icon: 'question', showCancelButton: true,
+                    confirmButtonText: 'Logout', cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        signOut(auth); // This will trigger onAuthStateChanged to redirect
+                    }
+                });
+            });
+            
+            const showToast = (icon, title) => Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true }).fire({ icon, title });
+            const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
+            const closeViewDetailsModal = () => viewDetailsModalOverlay.classList.remove('active');
+            viewDetailsCloseBtn.addEventListener('click', closeViewDetailsModal);
+            viewDetailsModalOverlay.addEventListener('click', (e) => { if(e.target === viewDetailsModalOverlay) closeViewDetailsModal() });
+            
+            tableBody.addEventListener('click', async (e) => {
+                const targetButton = e.target.closest('button');
+                if (!targetButton) return;
+                const { id, name, email, position } = targetButton.dataset;
+                if (!id) return;
+
+                if (targetButton.classList.contains('view-details')) {
+                    const docRef = doc(db, "job-applications", id);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const appData = docSnap.data();
+                        document.getElementById('detail-name').textContent = `${appData.firstName} ${appData.lastName}`;
+                        document.getElementById('detail-email').textContent = appData.email || 'N/A';
+                        document.getElementById('detail-age').textContent = appData.age || 'N/A';
+                        document.getElementById('detail-degree').textContent = appData.degree || 'N/A';
+                        document.getElementById('detail-experience').textContent = appData.experience || 'Not provided';
+                        document.getElementById('detail-available-from').textContent = appData.availableFrom || 'N/A';
+                        document.getElementById('detail-available-to').textContent = appData.availableTo || 'Not specified';
+                        document.getElementById('detail-resume').innerHTML = `<a href="${appData.resumeLink}" target="_blank">${appData.resumeLink}</a>`;
+                        openViewDetailsModal();
+                    } else {
+                        showToast('error', 'Could not find application data.');
+                    }
+                }
+
+                if (targetButton.classList.contains('accept')) {
+                    if (!email) { showToast('error', "Applicant's email is missing!"); return; }
+                    const templateParams = { name, email, position };
+                    try {
+                        targetButton.disabled = true;
+                        targetButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Accepting...`;
+                        await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
+                        await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
+                        showToast('success', 'Acceptance email sent!');
+                    } catch (error) {
+                        showToast('error', 'Could not send email.');
+                        targetButton.disabled = false; 
+                        targetButton.innerHTML = `<i class="fas fa-check"></i> Accept`;
+                    }
+                }
+                
+                if (targetButton.classList.contains('reject')) {
+                    if (!email) { showToast('error', "Applicant's email is missing!"); return; }
+                    Swal.fire({
+                        title: 'Reject Application?', text: `This will send a rejection email to ${name}.`, icon: 'warning',
+                        showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, Reject It'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            const templateParams = { name, email, position };
+                            try {
+                                await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', templateParams);
+                                await updateDoc(doc(db, "job-applications", id), { status: 'rejected' });
+                                showToast('success', 'Rejection email sent!');
+                            } catch (error) {
+                                showToast('error', 'Could not send email.');
+                            }
+                        }
+                    });
+                }
+
+                if (targetButton.classList.contains('delete')) {
+                    Swal.fire({
+                        title: 'Delete this application?', text: "This action is permanent and irreversible.", icon: 'error',
+                        showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, Delete Forever!'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                           try {
+                                await deleteDoc(doc(db, "job-applications", id));
+                                showToast('info', 'Application deleted.');
+                           } catch (error) {
+                               showToast('error', 'Could not delete application.');
+                           }
+                        }
+                    });
+                }
+            });
+
+            const q = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
+            onSnapshot(q, (snapshot) => {
+                tableBody.innerHTML = ''; 
+                appCountBadge.textContent = snapshot.size;
+                if (snapshot.empty) {
+                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No applications found.</td></tr>`;
+                    return;
+                }
+
+                snapshot.docs.forEach((docSnapshot, index) => {
+                    const app = docSnapshot.data();
+                    const tr = document.createElement('tr');
+                    const status = app.status || 'pending';
+                    const applicantName = `${app.firstName} ${app.lastName}`;
+                    const applicantEmail = app.email || ''; 
+                    const statusHtml = `<span class="status-badge status-${status}">${status}</span>`;
+                    
+                    let actionsHtml = `<button class="btn-action view-details" data-id="${docSnapshot.id}"><i class="fas fa-eye"></i> View Details</button>`;
+                    if (status === 'pending') {
+                        actionsHtml += `<button class="btn-action accept" data-id="${docSnapshot.id}" data-name="${applicantName}" data-email="${applicantEmail}" data-position="${app.position}"><i class="fas fa-check"></i> Accept</button>`;
+                        actionsHtml += `<button class="btn-action reject" data-id="${docSnapshot.id}" data-name="${applicantName}" data-email="${applicantEmail}" data-position="${app.position}"><i class="fas fa-times"></i> Reject</button>`;
+                    } else {
+                        actionsHtml += `<button class="btn-action delete" data-id="${docSnapshot.id}"><i class="fas fa-trash-alt"></i> Delete</button>`;
+                    }
+                    
+                    tr.innerHTML = `
+                        <td>${applicantName}</td>
+                        <td>${app.position}</td>
+                        <td>${statusHtml}</td>
+                        <td><div class="applications-page-actions">${actionsHtml}</div></td>`;
+                    
+                    tr.style.animationDelay = `${index * 50}ms`;
+                    tr.classList.add('row-visible');
+                    
+                    tableBody.appendChild(tr);
+                });
+            }, (error) => {
+                // This error handler is crucial for debugging security rule issues
+                console.error("Firestore onSnapshot error:", error);
+                Swal.fire('Database Error', 'Could not fetch applications. Check permissions.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

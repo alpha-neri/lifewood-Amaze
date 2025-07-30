@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifewood | Admin Login</title>
+
+    <link rel="icon" href="lifewood.svg" type="image/svg+xml">
+    <!-- Google Fonts (Manrope) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+    <!-- Load Firebase Config Separately for security -->
+    <script src="js/firebase-config.js"></script>
+
+</head>
+<body>
+
+    <div class="login-container">
+        
+        <a href="index.html" class="login-logo">
+            <span class="logo-icon"></span>lifewood
+        </a>
+
+        <div class="login-card" id="login-card">
+            <h1>Admin Portal</h1>
+            <p>Please sign in to continue</p>
+            
+            <form id="login-form">
+                
+                <div id="error-message">Invalid email or password.</div>
+
+                <div class="input-group">
+                    <!-- Note: The ID is still 'username' to match the script, but we'll change its behavior -->
+                    <input type="text" id="username" placeholder="Username" required>
+                    <i class="fas fa-user"></i>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                
+                <button type="submit" class="btn" id="login-button">Sign In</button>
+            </form>
+
+            <a href="index.html" class="back-link">← Back to Main Site</a>
+        </div>
+    </div>
+    
+    <!-- JAVASCRIPT for SECURE login logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        // The 'firebaseConfig' object is now available globally from firebase-config.js
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const loginCard = document.getElementById('login-card');
+            const emailInput = document.getElementById('username'); // This input field is now for email
+            const passwordInput = document.getElementById('password');
+            const loginButton = document.getElementById('login-button');
+            const errorMessage = document.getElementById('error-message');
+
+            // --- UX IMPROVEMENT: Update the input field for clarity ---
+            emailInput.placeholder = "Admin Email";
+            emailInput.type = "email"; // Change input type to email for better validation
+
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                errorMessage.classList.remove('show');
+                loginCard.classList.remove('shake');
+                loginButton.disabled = true;
+                loginButton.textContent = 'Verifying...';
+
+                const email = emailInput.value;
+                const password = passwordInput.value;
+
+                // --- SECURE FIREBASE AUTHENTICATION ---
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // --- SUCCESS ---
+                        loginButton.style.backgroundColor = 'var(--castleton-green)';
+                        loginButton.textContent = 'Success! Redirecting...';
+                        setTimeout(() => {
+                            window.location.href = 'adminpage.html'; 
+                        }, 1000);
+                    })
+                    .catch((error) => {
+                        // --- FAILURE ---
+                        console.error("Authentication failed:", error.code);
+                        errorMessage.textContent = 'Invalid email or password.';
+                        errorMessage.classList.add('show');
+                        loginCard.classList.add('shake');
+                        loginButton.disabled = false;
+                        loginButton.textContent = 'Sign In';
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
