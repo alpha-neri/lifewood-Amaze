@@ -521,7 +521,7 @@
             if (leftColumn) aboutObserver.observe(leftColumn);
             if (rightColumn) aboutObserver.observe(rightColumn);
             
-            // --- NEW: LANGUAGE & NEWS MODAL SCRIPT ---
+            // --- LANGUAGE & NEWS MODAL SCRIPT ---
             const modal = document.getElementById('news-modal');
             const langButtons = document.querySelectorAll('.lang-btn');
 
@@ -585,6 +585,36 @@
 
             const savedLang = localStorage.getItem('lifewoodLang') || 'en';
             setLanguage(savedLang);
+
+            // --- SECRET ADMIN LOGIN ---
+            // This script adds a hidden way to access the admin page.
+            // Click the logo 5 times quickly to be redirected.
+            (function() {
+                const logos = document.querySelectorAll('.nav-logo');
+                const requiredClicks = 5;
+                const redirectURL = 'admin.html'; // Change this to your admin login page if different
+                let clickCount = 0;
+                let clickTimer;
+
+                const resetCounter = () => {
+                    clickCount = 0;
+                };
+
+                const logoClickHandler = () => {
+                    clickCount++;
+                    clearTimeout(clickTimer);
+                    clickTimer = setTimeout(resetCounter, 2000); // Reset after 2 seconds of inactivity
+
+                    if (clickCount >= requiredClicks) {
+                        window.location.href = redirectURL;
+                    }
+                };
+                
+                logos.forEach(logo => {
+                    logo.addEventListener('click', logoClickHandler);
+                });
+            })();
+
         });
     </script>
 </body>
