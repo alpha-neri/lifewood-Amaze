@@ -3,234 +3,619 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lifewood | Admin Dashboard</title>
+    <title>Lifewood | Always Switch On</title>
+
     <link rel="icon" href="lifewood.svg" type="image/svg+xml">
+    <!-- Google Fonts (Manrope & Poppins for the new section) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Link to your single, complete CSS file -->
-    <link rel="stylesheet" href="css/adminpage.css">
-    
-    <!-- SweetAlert2 for modern alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Load Firebase Config Separately -->
-    <script src="js/firebase-config.js"></script>
 
+    <!-- External CSS Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="admin-wrapper">
-        <aside class="admin-sidebar" id="sidebar">
-            <div class="sidebar-header"><a href="index.html" class="nav-logo"><span class="logo-icon"></span>lifewood</a></div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="adminpage.html" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-                    <li><a href="JobApplication.html"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
-                    <li><a href="news-management.html"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
-                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
-                </ul>
-            </nav>
-            <div class="sidebar-footer"><a class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></div>
-        </aside>
 
-        <main class="main-content">
-            <header class="main-header">
-                <div class="header-left">
-                    <button class="mobile-menu-toggle" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
-                    <h1>Dashboard</h1>
-                </div>
-                <div class="user-profile"><span>Welcome, Admin</span><div class="avatar"><i class="fas fa-user"></i></div></div>
-            </header>
-
-            <!-- STATS SECTION -->
-            <section class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="total-applicants-stat">0</span>
-                        <span class="stat-title">Total Applicants</span>
+    <!-- ENHANCED Header & Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="#home" class="nav-logo">
+                <span class="logo-icon"></span>lifewood
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link" data-en="Home" data-zh="首页">Home</a></li>
+                <li><a href="#solutions" class="nav-link" data-en="Services" data-zh="服务">Services</a></li>
+                <li><a href="#news" class="nav-link" data-en="News" data-zh="新闻">News</a></li>
+                <li><a href="project.html" class="nav-link" data-en="Project" data-zh="项目">Project</a></li>
+                <li><a href="career.html" class="nav-link" data-en="Career" data-zh="招聘">Career</a></li>
+                <li><a href="#contact" class="nav-link-btn btn" data-en="Contact Us" data-zh="联系我们">Contact Us</a></li>
+                <!-- NEW: Language Switcher -->
+                <li>
+                    <div class="language-switcher">
+                        <button class="lang-btn" data-lang="en">EN</button>
+                        <span class="lang-separator">/</span>
+                        <button class="lang-btn" data-lang="zh">中文</button>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-accepted"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="accepted-stat">0</span>
-                        <span class="stat-title">Accepted</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="rejected-stat">0</span>
-                        <span class="stat-title">Rejected</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="pending-stat">0</span>
-                        <span class="stat-title">Pending Review</span>
-                    </div>
-                </div>
-                 <div class="stat-card">
-                    <div class="stat-icon icon-positions"><i class="fas fa-briefcase"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="positions-stat">0</span>
-                        <span class="stat-title">Unique Positions</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="content-panel">
-                <div class="panel-header"><h3>Recent Job Applications</h3></div>
-                <div class="table-responsive">
-                    <table id="applications-table">
-                        <thead>
-                            <tr>
-                                <th>Applicant Name</th>
-                                <th>Position</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- VIEW-ONLY DETAILS MODAL -->
-    <div class="modal-overlay" id="view-details-modal-overlay">
-        <div class="modal" id="view-details-modal">
-            <div class="modal-header"><h3>Application Details</h3><button class="modal-close" id="view-details-close-btn">×</button></div>
-            <div class="modal-body details-modal-body">
-                <div class="detail-field"><span class="detail-label">Full Name</span><span class="detail-value" id="detail-name">-</span></div>
-                <div class="detail-field"><span class="detail-label">Email</span><span class="detail-value" id="detail-email">-</span></div>
-                <div class="detail-field"><span class="detail-label">Age</span><span class="detail-value" id="detail-age">-</span></div>
-                <div class="detail-field"><span class="detail-label">Highest Degree</span><span class="detail-value" id="detail-degree">-</span></div>
-                <div class="detail-field"><span class="detail-label">Resume Link</span><span class="detail-value" id="detail-resume">-</span></div>
-                <div class="detail-field"><span class="detail-label">Available From</span><span class="detail-value" id="detail-available-from">-</span></div>
-                <div class="detail-field"><span class="detail-label">Available To</span><span class="detail-value" id="detail-available-to">-</span></div>
-                <div class="detail-field"><span class="detail-label">Relevant Experience</span><div class="detail-value-experience" id="detail-experience">-</div></div>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="nav-toggle">
+                <i class="fas fa-bars"></i>
             </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- 1. HERO SLIDER SECTION -->
+        <section id="home" class="hero-slider">
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <!-- Slide 1 -->
+                    <div class="slide active" style="background-image: url('https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                        <div class="slide-content">
+                            <h3 data-en="Always switch on never off" data-zh="永不关机，时刻在线">Always switch on never off</h3>
+                            <p data-en="Harnessing the power of AI, design, and strategy to drive brand success in the digital age." data-zh="利用人工智能、设计和策略的力量，推动品牌在数字时代取得成功。">Harnessing the power of AI, design, and strategy to drive brand success in the digital age.</p>
+                            <a href="#about" class="btn btn-accent" data-en="Discover More" data-zh="探索更多">Discover More</a>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="slide" style="background-image: url('https://images.pexels.com/photos/7594066/pexels-photo-7594066.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                        <div class="slide-content">
+                            <h3 data-en="Discover Your Digital Heritage with AI" data-zh="用人工智能发现您的数字遗产">Discover Your Digital Heritage with AI</h3>
+                            <p data-en="Our cutting-edge AI technology helps uncover deep family connections and histories like never before." data-zh="我们尖端的AI技术帮助您以前所未有的方式发现深厚的家族联系和历史。">Our cutting-edge AI technology helps uncover deep family connections and histories like never before.</p>
+                            <a href="#solutions" class="btn btn-accent" data-en="Explore Genealogy Tools" data-zh="探索家谱工具">Explore Genealogy Tools</a>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="slide" style="background-image: url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');">
+                        <div class="slide-content">
+                            <h3 data-en="Empowering Enterprises with Intelligent Analytics" data-zh="以智能分析赋能企业">Empowering Enterprises with Intelligent Analytics</h3>
+                            <p data-en="Leverage artificial intelligence to drive growth, streamline processes, and unlock smarter business insights." data-zh="利用人工智能推动增长、简化流程并解锁更智能的商业洞察。">Leverage artificial intelligence to drive growth, streamline processes, and unlock smarter business insights.</p>
+                             <a href="#solutions" class="btn btn-accent" data-en="View Business Solutions" data-zh="查看商业解决方案">View Business Solutions</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Navigation -->
+                <button class="slider-nav prev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+                <button class="slider-nav next" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+                <!-- Dots -->
+                <div class="slider-dots"></div>
+            </div>
+        </section>
+
+         <!-- 2. About Us Section (REPLACED) -->
+        <section id="about">
+            <div class="container">
+                <div class="about-wrapper">
+                    
+                    <!-- Left Column: Headline, Tagline, and Features -->
+                    <div class="about-left-column">
+                        <h1 data-en="Who We Are" data-zh="我们是谁">Who We Are</h1>
+                        <div class="divider"></div>
+                        <p class="tagline" data-en="We are a passionate team of strategists, designers, and technologists dedicated to building impactful brands." data-zh="我们是一支充满热情的战略家、设计师和技术专家团队，致力于打造有影响力的品牌。">
+                            We are a passionate team of strategists, designers, and technologists dedicated to building impactful brands.
+                        </p>
+                        <div class="feature-blocks">
+                            <div class="feature-block">
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-chess-knight"></i>
+                                </div>
+                                <span data-en="Strategists" data-zh="战略家">Strategists</span>
+                            </div>
+                            <div class="feature-block">
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                </div>
+                                <span data-en="Designers" data-zh="设计师">Designers</span>
+                            </div>
+                            <div class="feature-block">
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-code"></i>
+                                </div>
+                                <span data-en="Technologists" data-zh="技术专家">Technologists</span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Right Column: Mission and Story -->
+                    <div class="about-right-column">
+                        <p class="story" data-en="At Lifewood, our mission is to empower businesses by creating <strong class='highlight'>unforgettable digital experiences</strong>. We believe that great design is born from a deep understanding of human behavior, combined with <strong class='highlight'>data-driven strategy</strong> and cutting-edge technology. <br><br> Our story began with a simple idea: to build a creative agency that acts as a <strong class='highlight'>true partner</strong> to its clients, fostering growth and innovation every step of the way." data-zh="在Lifewood，我们的使命是通过创造<strong class='highlight'>令人难忘的数字体验</strong>来赋能企业。我们相信，伟大的设计源于对人类行为的深刻理解，并结合<strong class='highlight'>数据驱动的策略</strong>和尖端技术。<br><br>我们的故事始于一个简单的想法：建立一个创意机构，作为客户的<strong class='highlight'>真正合作伙伴</strong>，在每一步都促进增长和创新。">
+                            At Lifewood, our mission is to empower businesses by creating <strong class="highlight">unforgettable digital experiences</strong>. We believe that great design is born from a deep understanding of human behavior, combined with <strong class="highlight">data-driven strategy</strong> and cutting-edge technology. 
+                            <br><br>
+                            Our story began with a simple idea: to build a creative agency that acts as a <strong class="highlight">true partner</strong> to its clients, fostering growth and innovation every step of the way.
+                        </p>
+                    </div>
+    
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission, Vision & Core Values Section -->
+        <section id="mission-vision" class="fade-in">
+            <div class="container">
+                <h2 class="section-title" data-en="Our Guiding Principles" data-zh="我们的指导原则">Our Guiding Principles</h2>
+                <p class="section-subtitle" data-en="The philosophy that drives our work and defines our commitment to every client and project." data-zh="驱动我们工作、定义我们对每个客户和项目承诺的理念。">The philosophy that drives our work and defines our commitment to every client and project.</p>
+
+                <div class="mission-vision-wrapper">
+                    <div class="mission-vision-item">
+                        <h3 data-en="<i class='fas fa-rocket'></i> Our Mission" data-zh="<i class='fas fa-rocket'></i> 我们的使命"><i class="fas fa-rocket"></i> Our Mission</h3>
+                        <p data-en="To empower brands to achieve their full potential in the digital landscape. We craft intelligent, human-centered digital solutions that drive growth, foster connection, and deliver measurable results." data-zh="赋能品牌，在数字领域充分发挥其潜力。我们打造智能、以人为本的数字解决方案，以推动增长、促进联系并交付可衡量的成果。">To empower brands to achieve their full potential in the digital landscape. We craft intelligent, human-centered digital solutions that drive growth, foster connection, and deliver measurable results.</p>
+                    </div>
+                    <div class="mission-vision-item">
+                        <h3 data-en="<i class='fas fa-eye'></i> Our Vision" data-zh="<i class='fas fa-eye'></i> 我们的愿景"><i class="fas fa-eye"></i> Our Vision</h3>
+                        <p data-en="To be a globally recognized leader in digital innovation, shaping a future where technology and creativity converge to build more intuitive, sustainable, and meaningful online experiences for everyone." data-zh="成为全球公认的数字创新领导者，塑造一个技术与创意融合的未来，为每个人构建更直观、可持续和有意义的在线体验。">To be a globally recognized leader in digital innovation, shaping a future where technology and creativity converge to build more intuitive, sustainable, and meaningful online experiences for everyone.</p>
+                    </div>
+                </div>
+
+                <h3 class="core-values-title" data-en="Our Core Values" data-zh="我们的核心价值观">Our Core Values</h3>
+                <div class="core-values-grid">
+                    <div class="core-value-item">
+                        <span class="value-icon"><i class="fas fa-lightbulb"></i></span>
+                        <h4 data-en="Innovation" data-zh="创新">Innovation</h4>
+                        <p data-en="We constantly push the boundaries of technology and creativity to deliver forward-thinking solutions." data-zh="我们不断推动技术和创意的边界，以提供具有前瞻性的解决方案。">We constantly push the boundaries of technology and creativity to deliver forward-thinking solutions.</p>
+                    </div>
+                    <div class="core-value-item">
+                        <span class="value-icon"><i class="fas fa-shield-halved"></i></span>
+                        <h4 data-en="Integrity" data-zh="诚信">Integrity</h4>
+                        <p data-en="We operate with transparency and honesty, building trust through every interaction and decision." data-zh="我们以透明和诚实的方式运营，通过每一次互动和决策建立信任。">We operate with transparency and honesty, building trust through every interaction and decision.</p>
+                    </div>
+                    <div class="core-value-item">
+                        <span class="value-icon"><i class="fas fa-users"></i></span>
+                        <h4 data-en="Collaboration" data-zh="协作">Collaboration</h4>
+                        <p data-en="We work as true partners with our clients, believing that the best results come from shared ideas and goals." data-zh="我们作为客户的真正合作伙伴，相信最好的结果来自共享的想法和目标。">We work as true partners with our clients, believing that the best results come from shared ideas and goals.</p>
+                    </div>
+                    <div class="core-value-item">
+                        <span class="value-icon"><i class="fas fa-gem"></i></span>
+                        <h4 data-en="Excellence" data-zh="卓越">Excellence</h4>
+                        <p data-en="We are committed to the highest standards of quality, delivering work that is both beautiful and effective." data-zh="我们致力于最高质量标准，交付既美观又有效的作品。">We are committed to the highest standards of quality, delivering work that is both beautiful and effective.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. We Offer Section -->
+        <section id="what-we-offer">
+            <div class="container">
+                <h2 class="section-title" data-en="What We Offer" data-zh="我们提供什么">What We Offer</h2>
+                <p class="section-subtitle" data-en="Core advantages that set us apart from the competition." data-zh="使我们从竞争中脱颖而出的核心优势。">Core advantages that set us apart from the competition.</p>
+                <div class="offers-grid">
+                    <div class="offer-item fade-in">
+                        <div class="offer-icon"><i class="fas fa-compass-drafting"></i></div>
+                        <h3 data-en="Strategic Insight" data-zh="战略洞察">Strategic Insight</h3>
+                        <p data-en="We go beyond design to provide data-driven strategies that ensure market relevance and long-term growth." data-zh="我们超越设计，提供数据驱动的策略，确保市场相关性和长期增长。">We go beyond design to provide data-driven strategies that ensure market relevance and long-term growth.</p>
+                    </div>
+                    <div class="offer-item fade-in">
+                        <div class="offer-icon"><i class="fas fa-microchip"></i></div>
+                        <h3 data-en="Cutting-Edge Tech" data-zh="尖端技术">Cutting-Edge Tech</h3>
+                        <p data-en="Our solutions are built on the latest technologies, ensuring your brand is fast, secure, and future-proof." data-zh="我们的解决方案建立在最新技术之上，确保您的品牌快速、安全且面向未来。">Our solutions are built on the latest technologies, ensuring your brand is fast, secure, and future-proof.</p>
+                    </div>
+                    <div class="offer-item fade-in">
+                        <div class="offer-icon"><i class="fas fa-handshake-simple"></i></div>
+                        <h3 data-en="Dedicated Partnership" data-zh="专属合作">Dedicated Partnership</h3>
+                        <p data-en="We believe in collaboration. Your success is our success, and we work as a true extension of your team." data-zh="我们相信协作。您的成功就是我们的成功，我们作为您团队的真正延伸。">We believe in collaboration. Your success is our success, and we work as a true extension of your team.</p>
+                    </div>
+                </div>
+                <div class="offers-cta">
+                    <a href="#solutions" class="btn" data-en="View All Services" data-zh="查看所有服务">View All Services</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ADVANCED SOLUTIONS SECTION -->
+        <section id="solutions" class="fade-in dark-section">
+            <div class="container">
+                <h2 class="section-title" data-en="Our Advanced AI Solutions" data-zh="我们先进的AI解决方案">Our Advanced AI Solutions</h2>
+                <p class="section-subtitle" data-en="We build intelligent systems that solve complex challenges and drive unparalleled growth for your business." data-zh="我们构建智能系统，解决复杂挑战，为您的业务带来无与伦比的增长。">We build intelligent systems that solve complex challenges and drive unparalleled growth for your business.</p>
+                
+                <div class="solutions-card-grid">
+                    <!-- Card 1: Data Aquisition -->
+                    <div class="solution-flip-card">
+                        <div class="solution-flip-card-inner">
+                            <div class="solution-flip-card-front shape-1">
+                                <i class="fas fa-dna service-icon"></i>
+                                <h3 data-en="Data Aquisition" data-zh="数据采集">Data Aquisition</h3>
+                            </div>
+                            <div class="solution-flip-card-back">
+                                <p data-en="Seamlessly Capture Valuable Data from Diverse Sources. We specialize in acquiring high-quality data from sensors, APIs, web platforms, and custom sources to fuel your digital solutions." data-zh="从多样化来源无缝捕获有价值的数据。我们专注于从传感器、API、网络平台和自定义来源获取高质量数据，为您的数字解决方案提供动力。">Seamlessly Capture Valuable Data from Diverse Sources. We specialize in acquiring high-quality data from sensors, APIs, web platforms, and custom sources to fuel your digital solutions.</p>
+                                <a href="#" class="learn-more" data-en="Learn More →" data-zh="了解更多 →">Learn More →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2: Data Collection -->
+                    <div class="solution-flip-card">
+                        <div class="solution-flip-card-inner">
+                            <div class="solution-flip-card-front shape-2">
+                                <i class="fas fa-brain service-icon"></i>
+                                <h3 data-en="Data Collection" data-zh="数据收集">Data Collection</h3>
+                            </div>
+                            <div class="solution-flip-card-back">
+                                <p data-en="Comprehensive Data Collection Tailored to Your Needs. From surveys to transactional data, we collect, compile, and organize datasets that align with your project’s objectives." data-zh="根据您的需求量身定制全面的数据收集。从调查到交易数据，我们收集、编译和组织符合您项目目标的数据集。">Comprehensive Data Collection Tailored to Your Needs. From surveys to transactional data, we collect, compile, and organize datasets that align with your project’s objectives.</p>
+                                <a href="#" class="learn-more" data-en="Learn More →" data-zh="了解更多 →">Learn More →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3: Data Annotation -->
+                    <div class="solution-flip-card">
+                        <div class="solution-flip-card-inner">
+                            <div class="solution-flip-card-front shape-3">
+                                <i class="fas fa-shield-virus service-icon"></i>
+                                <h3 data-en="Data Annotation" data-zh="数据标注">Data Annotation</h3>
+                            </div>
+                            <div class="solution-flip-card-back">
+                                <p data-en="High-Precision Data Labeling for AI & Machine Learning. Our expert annotation services add meaningful tags, labels, and classifications to your data—enabling smarter, faster AI training." data-zh="为AI和机器学习提供高精度数据标注。我们的专家标注服务为您的数据添加有意义的标签、标记和分类——实现更智能、更快速的AI训练。">High-Precision Data Labeling for AI & Machine Learning. Our expert annotation services add meaningful tags, labels, and classifications to your data—enabling smarter, faster AI training.</p>
+                                <a href="#" class="learn-more" data-en="Learn More →" data-zh="了解更多 →">Learn More →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 4: Data Curation -->
+                    <div class="solution-flip-card">
+                        <div class="solution-flip-card-inner">
+                            <div class="solution-flip-card-front shape-4">
+                                <i class="fas fa-robot service-icon"></i>
+                                <h3 data-en="Data Curation" data-zh="数据策展">Data Curation</h3>
+                            </div>
+                            <div class="solution-flip-card-back">
+                                <p data-en="Curating Clean, Consistent & Insightful Datasets. We refine and structure your datasets for optimal performance—ensuring accuracy, relevance, and readiness for advanced analytics." data-zh="策展干净、一致且富有洞察力的数据集。我们为实现最佳性能而优化和构建您的数据集——确保其准确性、相关性并为高级分析做好准备。">Curating Clean, Consistent & Insightful Datasets. We refine and structure your datasets for optimal performance—ensuring accuracy, relevance, and readiness for advanced analytics.</p>
+                                <a href="#" class="learn-more" data-en="Learn More →" data-zh="了解更多 →">Learn More →</a>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Card 5: Data Validation -->
+                     <div class="solution-flip-card">
+                        <div class="solution-flip-card-inner">
+                            <div class="solution-flip-card-front shape-5">
+                                <i class="fas fa-wand-magic-sparkles service-icon"></i>
+                                <h3 data-en="Data Validation" data-zh="数据验证">Data Validation</h3>
+                            </div>
+                            <div class="solution-flip-card-back">
+                                <p data-en="Ensuring Data Integrity & Accuracy. We validate your data against rigorous quality standards, removing inconsistencies and ensuring compliance with your business rules." data-zh="确保数据完整性与准确性。我们根据严格的质量标准验证您的数据，消除不一致性并确保符合您的业务规则。">Ensuring Data Integrity & Accuracy. We validate your data against rigorous quality standards, removing inconsistencies and ensuring compliance with your business rules.</p>
+                                <a href="#" class="learn-more" data-en="Learn More →" data-zh="了解更多 →">Learn More →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 6: Data Gatherings -->
+                    <div class="solution-flip-card">
+                        <div class="solution-flip-card-inner">
+                            <div class="solution-flip-card-front shape-6">
+                                <i class="fas fa-camera-retro service-icon"></i>
+                                <h3 data-en="Data Gatherings" data-zh="数据汇集">Data Gatherings</h3>
+                            </div>
+                            <div class="solution-flip-card-back">
+                                <p data-en="Proactive Data Gathering to Drive Insights. We gather data from trusted sources through advanced methods like web scraping, social media monitoring, and automated workflows." data-zh="主动收集数据以驱动洞察。我们通过网络抓取、社交媒体监控和自动化工作流等先进方法从可信来源收集数据。">Proactive Data Gathering to Drive Insights. We gather data from trusted sources through advanced methods like web scraping, social media monitoring, and automated workflows.</p>
+                                <a href="#" class="learn-more" data-en="Learn More →" data-zh="了解更多 →">Learn More →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="solutions-footer-cta">
+                    <p data-en="Ready to unlock the future of AI-driven solutions? <a href='#contact'>Let’s connect.</a> — Be Amaze." data-zh="准备好开启AI驱动解决方案的未来了吗？<a href='#contact'>联系我们。</a> — 感受惊喜。">Ready to unlock the future of AI-driven solutions? <a href="#contact">Let’s connect.</a> — Be Amaze.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 5. News & Updates Section -->
+        <section id="news" class="fade-in">
+            <div class="container">
+                <h2 class="section-title" data-en="News & Updates" data-zh="新闻与更新">News & Updates</h2>
+                <p class="section-subtitle" data-en="Follow our latest announcements, industry insights, and success stories." data-zh="关注我们的最新公告、行业洞察和成功案例。">Follow our latest announcements, industry insights, and success stories.</p>
+                <div class="news-layout">
+                    <div class="news-posts">
+                        <article class="news-post" data-fulltext-en="<p>We are thrilled to announce the launch of 'BrandPulse', our new platform designed to give businesses real-time insights into their brand performance using advanced AI.</p><p>BrandPulse leverages machine learning algorithms to analyze social media sentiment, web traffic patterns, and competitor activity, providing a holistic view of your brand's digital footprint. This allows for proactive strategy adjustments and data-driven marketing campaigns that truly resonate with your target audience. The platform is currently in beta for select partners.</p>" data-fulltext-zh="<p>我们非常激动地宣布推出'BrandPulse'，我们的新平台旨在使用先进的AI为企业提供关于其品牌表现的实时洞察。</p><p>BrandPulse利用机器学习算法分析社交媒体情绪、网络流量模式和竞争对手活动，提供您品牌数字足迹的全面视图。这使得能够进行主动的策略调整和真正能与目标受众产生共鸣的数据驱动营销活动。该平台目前正对部分合作伙伴进行Beta测试。</p>">
+                            <div class="news-post-meta"><span class="date"><i class="far fa-calendar-alt"></i> March 15, 2024</span></div>
+                            <h3 class="news-post-title" data-en="Lifewood Unveils New AI-Powered Branding Platform" data-zh="Lifewood推出全新AI驱动的品牌平台">Lifewood Unveils New AI-Powered Branding Platform</h3>
+                            <p class="news-post-excerpt" data-en="We are thrilled to announce the launch of 'BrandPulse', our new platform designed to give businesses real-time insights into their brand performance using advanced AI." data-zh="我们非常激动地宣布推出'BrandPulse'，我们的新平台旨在使用先进的AI为企业提供关于其品牌表现的实时洞察。">We are thrilled to announce the launch of 'BrandPulse', our new platform designed to give businesses real-time insights into their brand performance using advanced AI.</p>
+                            <a href="#" class="read-more-link" data-en="Read More →" data-zh="阅读更多 →">Read More →</a>
+                        </article>
+                        <article class="news-post" data-fulltext-en="<p>Our creative director shares insights on the most impactful web design trends, from immersive 3D elements to the resurgence of brutalism in modern interfaces.</p><p>Key takeaways include the importance of micro-interactions for user engagement, the shift towards 'dark mode' as a standard option, and how AI-driven personalization is creating more dynamic and relevant user experiences. We also explore how accessibility is no longer an afterthought but a core principle of good design.</p>" data-fulltext-zh="<p>我们的创意总监分享了最具影响力的网页设计趋势见解，从沉浸式3D元素到现代界面中野兽派风格的复兴。</p><p>关键要点包括微交互对用户参与度的重要性，向'暗黑模式'作为标准选项的转变，以及AI驱动的个性化如何创造更动态和相关的用户体验。我们还探讨了无障碍性如何不再是事后考虑，而是优秀设计的核心原则。</p>">
+                            <div class="news-post-meta"><span class="date"><i class="far fa-calendar-alt"></i> March 02, 2024</span></div>
+                            <h3 class="news-post-title" data-en="The Future of Web Design: Top 5 Trends for 2024" data-zh="网页设计的未来：2024年五大趋势">The Future of Web Design: Top 5 Trends for 2024</h3>
+                            <p class="news-post-excerpt" data-en="Our creative director shares insights on the most impactful web design trends, from immersive 3D elements to the resurgence of brutalism in modern interfaces." data-zh="我们的创意总监分享了最具影响力的网页设计趋势见解，从沉浸式3D元素到现代界面中野兽派风格的复兴。">Our creative director shares insights on the most impactful web design trends, from immersive 3D elements to the resurgence of brutalism in modern interfaces.</p>
+                            <a href="#" class="read-more-link" data-en="Read More →" data-zh="阅读更多 →">Read More →</a>
+                        </article>
+                        <article class="news-post" data-fulltext-en="<p>We're proud to collaborate with EcoWorld on their 'Green Future' initiative, developing a digital strategy to promote environmental awareness and action.</p><p>The campaign, launching next month, will feature an interactive website that visualizes carbon footprint data, a social media challenge to encourage sustainable habits, and a series of animated shorts explaining complex environmental issues. Our goal is to use technology and design to make sustainability accessible and engaging for a wider audience.</p>" data-fulltext-zh="<p>我们很荣幸能与EcoWorld合作开展其'绿色未来'倡议，共同制定数字策略以促进环境意识和行动。</p><p>该活动将于下月启动，将包括一个可视化碳足迹数据的互动网站、一个鼓励可持续习惯的社交媒体挑战，以及一系列解释复杂环境问题的动画短片。我们的目标是利用技术和设计，让可持续性对更广泛的受众来说既易于理解又引人入胜。</p>">
+                            <div class="news-post-meta"><span class="date"><i class="far fa-calendar-alt"></i> February 21, 2024</span></div>
+                            <h3 class="news-post-title" data-en="Lifewood Partners with EcoWorld to Launch Sustainability Campaign" data-zh="Lifewood与EcoWorld合作启动可持续发展活动">Lifewood Partners with EcoWorld to Launch Sustainability Campaign</h3>
+                            <p class="news-post-excerpt" data-en="We're proud to collaborate with EcoWorld on their 'Green Future' initiative, developing a digital strategy to promote environmental awareness and action." data-zh="我们很荣幸能与EcoWorld合作开展其'绿色未来'倡议，共同制定数字策略以促进环境意识和行动。">We're proud to collaborate with EcoWorld on their 'Green Future' initiative, developing a digital strategy to promote environmental awareness and action.</p>
+                            <a href="#" class="read-more-link" data-en="Read More →" data-zh="阅读更多 →">Read More →</a>
+                        </article>
+                    </div>
+                    <aside class="news-sidebar">
+                        <div class="sidebar-widget">
+                            <h4 data-en="Categories" data-zh="分类">Categories</h4>
+                            <ul>
+                                <li><a href="#" data-en="Company News" data-zh="公司新闻">Company News</a></li>
+                                <li><a href="#" data-en="Industry Insights" data-zh="行业洞察">Industry Insights</a></li>
+                                <li><a href="#" data-en="Design Trends" data-zh="设计趋势">Design Trends</a></li>
+                                <li><a href="#" data-en="Case Studies" data-zh="案例研究">Case Studies</a></li>
+                                <li><a href="#" data-en="Technology" data-zh="技术">Technology</a></li>
+                            </ul>
+                        </div>
+                        <div class="sidebar-widget">
+                            <h4 data-en="Tags" data-zh="标签">Tags</h4>
+                            <div class="tags-container">
+                                <a href="#" class="tag">AI</a>
+                                <a href="#" class="tag" data-en="Branding" data-zh="品牌">Branding</a>
+                                <a href="#" class="tag" data-en="Web Design" data-zh="网页设计">Web Design</a>
+                                <a href="#" class="tag" data-en="Marketing" data-zh="市场营销">Marketing</a>
+                                <a href="#" class="tag">UX</a>
+                                <a href="#" class="tag" data-en="Strategy" data-zh="战略">Strategy</a>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Testimonials/Clients Section -->
+        <section id="testimonials" class="fade-in dark-section">
+            <div class="container">
+                <h2 class="section-title" data-en="What Our Clients Say" data-zh="客户评价">What Our Clients Say</h2>
+                <p class="section-subtitle" data-en="We're proud to have partnered with amazing companies. Here's what they think of our work." data-zh="我们很自豪能与优秀的公司合作。这是他们对我们工作的看法。">We're proud to have partnered with amazing companies. Here's what they think of our work.</p>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p data-en='"Lifewood completely transformed our online presence. Their team is professional, creative, and delivered beyond our expectations."' data-zh='"Lifewood彻底改变了我们的在线形象。他们的团队专业、富有创造力，并且交付成果超出了我们的预期。"'>"Lifewood completely transformed our online presence. Their team is professional, creative, and delivered beyond our expectations."</p>
+                        <div class="testimonial-author" data-en="Sarah Johnson, <span>CEO of TechCorp</span>" data-zh="莎拉·约翰逊, <span>TechCorp首席执行官</span>">Sarah Johnson, <span>CEO of TechCorp</span></div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p data-en='"The branding strategy they developed was a game-changer for us. We've seen a significant increase in engagement."' data-zh='"他们制定的品牌战略对我们来说是一个改变游戏规则的因素。我们的参与度有了显著提高。"'>"The branding strategy they developed was a game-changer for us. We've seen a significant increase in engagement."</p>
+                        <div class="testimonial-author" data-en="David Lee, <span>Founder of StartUpGo</span>" data-zh="李大卫, <span>StartUpGo创始人</span>">David Lee, <span>Founder of StartUpGo</span></div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p data-en='"Working with Lifewood was a seamless experience. They are true partners who are invested in your success."' data-zh='"与Lifewood的合作是一次无缝的体验。他们是真正投入于您成功的合作伙伴。"'>"Working with Lifewood was a seamless experience. They are true partners who are invested in your success."</p>
+                        <div class="testimonial-author" data-en="Maria Garcia, <span>Marketing Director at FoodieFinds</span>" data-zh="玛丽亚·加西亚, <span>FoodieFinds市场总监</span>">Maria Garcia, <span>Marketing Director at FoodieFinds</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ENHANCED Contact Us Section -->
+        <section id="contact" class="dark-section">
+            <div class="container">
+                <h2 class="section-title" data-en="Get In Touch" data-zh="取得联系">Get In Touch</h2>
+                <p class="section-subtitle" data-en="Have a project in mind? We'd love to hear from you. Fill out the form or contact us directly." data-zh="心中有项目？我们很乐意听您讲述。请填写表格或直接联系我们。">Have a project in mind? We'd love to hear from you. Fill out the form or contact us directly.</p>
+                <div class="contact-box fade-in">
+                    <div class="contact-wrapper">
+                        <div class="contact-form">
+                            <form action="#">
+                                 <div class="form-group"><input type="text" name="name" required data-en-placeholder="Your Name" data-zh-placeholder="您的姓名" placeholder="Your Name"></div>
+                                <div class="form-group"><input type="email" name="email" required data-en-placeholder="Your Email" data-zh-placeholder="您的邮箱" placeholder="Your Email"></div>
+                                <div class="form-group"><textarea name="message" required data-en-placeholder="Your Message" data-zh-placeholder="您的留言" placeholder="Your Message"></textarea></div>
+                                <button type="submit" class="btn" data-en="Send Message" data-zh="发送消息">Send Message</button>
+                            </form>
+                        </div>
+                        <div class="contact-info">
+                            <ul>
+                                 <li><i class="fas fa-map-marker-alt"></i> I2 Building Ground Floor Jose Del Mar St. Asiatown, Salinas Drive, Cebu City, Philippines</li>
+                                 <li><i class="fas fa-phone"></i> 0927 615 5464</li>
+                                <li><i class="fas fa-envelope"></i> info.ph@lifewood.com</li>
+                                </ul>
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.267319910543!2d123.90487737591874!3d10.32049616616428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a9992015555555%3A0xb15b63005553e839!2si2%20Building!5e0!3m2!1sen!2sph!4v1715832791535!5m2!1sen!2sph" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- NEW: NEWS MODAL -->
+    <div id="news-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">×</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-meta" class="news-post-meta"></div>
+            <div id="modal-body"></div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-main">
+                <!-- About Widget -->
+                <div class="footer-widget footer-about">
+                    <a href="#home" class="nav-logo">
+                        <span class="logo-icon"></span>lifewood
+                    </a>
+                    <p class="footer-tagline" data-en="Always switch on never off" data-zh="永不关机，时刻在线">Always switch on never off</p>
+                    <div class="footer-social-icons">
+                        <a href="https://www.facebook.com/LifewoodPH" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.youtube.com/@LifewoodDataTechnology" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/company/lifewood" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+    
+                <!-- Quick Links Widget -->
+                <div class="footer-widget footer-links">
+                    <h4 data-en="Quick Links" data-zh="快速链接">Quick Links</h4>
+                    <ul>
+                        <li><a href="#home" data-en="Home" data-zh="首页">Home</a></li>
+                        <li><a href="#about" data-en="About Us" data-zh="关于我们">About Us</a></li>
+                        <li><a href="#solutions" data-en="Services" data-zh="服务">Services</a></li>
+                        <li><a href="#contact" data-en="Contact" data-zh="联系">Contact</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Newsletter Widget -->
+                <div class="footer-widget footer-newsletter">
+                    <h4 data-en="Join Our Newsletter" data-zh="加入我们的简报">Join Our Newsletter</h4>
+                    <p data-en="Get the latest insights on branding, AI, and design delivered to your inbox." data-zh="获取关于品牌、AI和设计的最新见解，发送至您的收件箱。">Get the latest insights on branding, AI, and design delivered to your inbox.</p>
+                    <form class="footer-newsletter-form">
+                        <input type="email" required data-en-placeholder="Enter your email" data-zh-placeholder="输入您的邮箱" placeholder="Enter your email">
+                        <button type="submit" aria-label="Subscribe"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+    
+            <div class="footer-bottom-bar">
+                <p class="copyright" data-en="© 2025 Lifewood. All Rights Reserved." data-zh="© 2025 Lifewood. 版权所有。">© 2025 Lifewood. All Rights Reserved.</p>
+                <p class="footer-final-tagline" data-en="Be Amaze." data-zh="感受惊喜。">Be Amaze.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- SCRIPT BLOCK (UPDATED) -->
+    <script>
+        // Existing Scripts
+        const navToggle = document.getElementById('nav-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const header = document.querySelector('.header');
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        navToggle.addEventListener('click', (e) => { e.stopPropagation(); navMenu.classList.toggle('active'); navToggle.classList.toggle('active'); });
+        document.querySelectorAll('.nav-menu a').forEach(link => { link.addEventListener('click', () => { if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } }); });
+        document.addEventListener('click', (e) => { if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !navToggle.contains(e.target)) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } });
+        window.addEventListener('scroll', () => { window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled'); });
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                initializeDashboard(user);
-            } else {
-                window.location.href = 'admin.html';
+        const faders = document.querySelectorAll('.fade-in');
+        const appearOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScrollObserver) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) { return; } 
+                else { entry.target.classList.add('visible'); appearOnScrollObserver.unobserve(entry.target); }
+            });
+        }, appearOptions);
+        faders.forEach(fader => { appearOnScroll.observe(fader); });
+
+        const heroSlider = document.querySelector('.hero-slider .slider-container');
+        if (heroSlider) {
+            const firstSlide = heroSlider.querySelector('.slide');
+            firstSlide.classList.remove('active');
+            setTimeout(() => { firstSlide.classList.add('active'); }, 500);
+            const sliderWrapper = heroSlider.querySelector('.slider-wrapper');
+            const slides = heroSlider.querySelectorAll('.slide');
+            const prevBtn = heroSlider.querySelector('.prev');
+            const nextBtn = heroSlider.querySelector('.next');
+            const dotsContainer = heroSlider.querySelector('.slider-dots');
+            let currentIndex = 0;
+            let slideInterval;
+            if (slides.length > 0) {
+                slides.forEach((_, i) => {
+                    const dot = document.createElement('span');
+                    dot.classList.add('dot');
+                    if (i === 0) dot.classList.add('active');
+                    dot.addEventListener('click', () => { goToSlide(i); resetInterval(); });
+                    dotsContainer.appendChild(dot);
+                });
+                const dots = dotsContainer.querySelectorAll('.dot');
+                function goToSlide(index) {
+                    if (currentIndex === index) return; slides[currentIndex].classList.remove('active'); currentIndex = index; slides[currentIndex].classList.add('active'); sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`; dots.forEach((dot, i) => { dot.classList.toggle('active', i === currentIndex); });
+                }
+                function nextSlide() { goToSlide((currentIndex + 1) % slides.length); }
+                function prevSlide() { goToSlide((currentIndex - 1 + slides.length) % slides.length); }
+                function startInterval() { slideInterval = setInterval(nextSlide, 7000); }
+                function resetInterval() { clearInterval(slideInterval); startInterval(); }
+                nextBtn.addEventListener('click', () => { nextSlide(); resetInterval(); });
+                prevBtn.addEventListener('click', () => { prevSlide(); resetInterval(); });
+                startInterval();
             }
-        });
-
-        function initializeDashboard(user) {
-            const sidebar = document.getElementById('sidebar');
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const logoutBtn = document.querySelector('.logout-btn');
-            const tableBody = document.querySelector('#applications-table tbody');
-            const appCountBadge = document.getElementById('application-count-badge');
-            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
-            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
-            const mainContent = document.querySelector('.main-content');
-            const totalApplicantsStat = document.getElementById('total-applicants-stat');
-            const acceptedStat = document.getElementById('accepted-stat');
-            const rejectedStat = document.getElementById('rejected-stat');
-            const pendingStat = document.getElementById('pending-stat');
-            const positionsStat = document.getElementById('positions-stat');
-            
-            mobileMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
-            mainContent.addEventListener('click', () => { if (sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Logout?', icon: 'question', showCancelButton: true,
-                    confirmButtonText: 'Yes, Logout', cancelButtonText: 'Cancel'
-                }).then((result) => { if (result.isConfirmed) { signOut(auth); } });
-            });
-
-            const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
-            const closeViewDetailsModal = () => viewDetailsModalOverlay.classList.remove('active');
-            viewDetailsCloseBtn.addEventListener('click', closeViewDetailsModal);
-            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) closeViewDetailsModal(); });
-            
-            tableBody.addEventListener('click', async (e) => {
-                const targetButton = e.target.closest('button.view-details');
-                if (!targetButton) return;
-                const docId = targetButton.dataset.id;
-                const docRef = doc(db, "job-applications", docId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const appData = docSnap.data();
-                    document.getElementById('detail-name').textContent = `${appData.firstName} ${appData.lastName}`;
-                    document.getElementById('detail-email').textContent = appData.email || 'N/A';
-                    document.getElementById('detail-age').textContent = appData.age || 'N/A';
-                    document.getElementById('detail-degree').textContent = appData.degree || 'N/A';
-                    document.getElementById('detail-experience').textContent = appData.experience || 'Not provided';
-                    document.getElementById('detail-available-from').textContent = appData.availableFrom || 'N/A';
-                    document.getElementById('detail-available-to').textContent = appData.availableTo || 'Not specified';
-                    document.getElementById('detail-resume').innerHTML = `<a href="${appData.resumeLink}" target="_blank">${appData.resumeLink}</a>`;
-                    openViewDetailsModal();
-                } else {
-                    Swal.fire('Error', 'Could not find the application details.', 'error');
-                }
-            });
-
-            const q = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
-            onSnapshot(q, (snapshot) => {
-                tableBody.innerHTML = ''; 
-                appCountBadge.textContent = snapshot.size;
-                let acceptedCount = 0;
-                let rejectedCount = 0;
-                let pendingCount = 0;
-                const positions = new Set();
-                if (snapshot.empty) {
-                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No applications found.</td></tr>`;
-                } else {
-                    snapshot.docs.forEach((docSnapshot, index) => {
-                        const app = docSnapshot.data();
-                        const status = app.status || 'pending';
-                        switch(status) {
-                            case 'accepted': acceptedCount++; break;
-                            case 'rejected': rejectedCount++; break;
-                            case 'pending': pendingCount++; break;
-                        }
-                        if (app.position) positions.add(app.position);
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${app.firstName} ${app.lastName}</td>
-                            <td>${app.position}</td>
-                            <td><span class="status-badge status-${status}">${status}</span></td>
-                            <td><div class="action-buttons"><button class="btn-action view-details" data-id="${docSnapshot.id}"><i class="fas fa-eye"></i> View</button></div></td>
-                        `;
-                        tr.style.animationDelay = `${index * 50}ms`;
-                        tr.classList.add('row-visible');
-                        tableBody.appendChild(tr);
-                    });
-                }
-                totalApplicantsStat.textContent = snapshot.size;
-                acceptedStat.textContent = acceptedCount;
-                rejectedStat.textContent = rejectedCount;
-                pendingStat.textContent = pendingCount;
-                positionsStat.textContent = positions.size;
-            }, (error) => {
-                console.error("Error fetching applications:", error);
-                Swal.fire('Database Error', 'Could not fetch applications from the database.', 'error');
-            });
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const aboutObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+            }, { root: null, rootMargin: '0px', threshold: 0.2 });
+            const leftColumn = document.querySelector('.about-left-column');
+            const rightColumn = document.querySelector('.about-right-column');
+            if (leftColumn) aboutObserver.observe(leftColumn);
+            if (rightColumn) aboutObserver.observe(rightColumn);
+            
+            // --- LANGUAGE & NEWS MODAL SCRIPT ---
+            const modal = document.getElementById('news-modal');
+            const langButtons = document.querySelectorAll('.lang-btn');
+
+            const setLanguage = (lang) => {
+                const elementsToTranslate = document.querySelectorAll('[data-en], [data-en-placeholder]');
+                
+                elementsToTranslate.forEach(el => {
+                    // For regular elements with innerHTML
+                    if (el.dataset.en) {
+                        el.innerHTML = el.dataset[lang] || el.dataset['en'];
+                    }
+                    // For input/textarea placeholders
+                    if (el.dataset.enPlaceholder) {
+                        el.placeholder = el.dataset[`${lang}Placeholder`] || el.dataset['enPlaceholder'];
+                    }
+                });
+
+                document.documentElement.lang = lang;
+                langButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.lang === lang);
+                });
+                localStorage.setItem('lifewoodLang', lang);
+            };
+
+            const openModal = (e) => {
+                e.preventDefault();
+                const article = e.target.closest('.news-post');
+                if (!article || !modal) return;
+                
+                const currentLang = localStorage.getItem('lifewoodLang') || 'en';
+                
+                const title = article.querySelector('.news-post-title').dataset[currentLang];
+                const fullText = article.dataset[`fulltext${currentLang}`] || article.dataset['fulltexten'];
+                const metaHTML = article.querySelector('.news-post-meta').innerHTML;
+
+                modal.querySelector('#modal-title').textContent = title;
+                modal.querySelector('#modal-meta').innerHTML = metaHTML;
+                modal.querySelector('#modal-body').innerHTML = fullText;
+                
+                modal.classList.add('active');
+                document.body.classList.add('modal-open');
+            };
+
+            const closeModal = () => {
+                if(modal) {
+                    modal.classList.remove('active');
+                    document.body.classList.remove('modal-open');
+                }
+            };
+            
+            if (modal) {
+                document.querySelectorAll('.news-post .read-more-link').forEach(link => link.addEventListener('click', openModal));
+                modal.querySelector('.modal-close').addEventListener('click', closeModal);
+                modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+            }
+
+            langButtons.forEach(button => {
+                button.addEventListener('click', () => setLanguage(button.dataset.lang));
+            });
+
+            const savedLang = localStorage.getItem('lifewoodLang') || 'en';
+            setLanguage(savedLang);
+
+            // --- SECRET ADMIN LOGIN ---
+            // This script adds a hidden way to access the admin page.
+            // Click the logo 5 times quickly to be redirected.
+            (function() {
+                const logos = document.querySelectorAll('.nav-logo');
+                const requiredClicks = 5;
+                const redirectURL = 'admin.html'; // Change this to your admin login page if different
+                let clickCount = 0;
+                let clickTimer;
+
+                const resetCounter = () => {
+                    clickCount = 0;
+                };
+
+                const logoClickHandler = () => {
+                    clickCount++;
+                    clearTimeout(clickTimer);
+                    clickTimer = setTimeout(resetCounter, 2000); // Reset after 2 seconds of inactivity
+
+                    if (clickCount >= requiredClicks) {
+                        window.location.href = redirectURL;
+                    }
+                };
+                
+                logos.forEach(logo => {
+                    logo.addEventListener('click', logoClickHandler);
+                });
+            })();
+
+        });
     </script>
 </body>
 </html>
