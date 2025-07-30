@@ -66,7 +66,6 @@
 
     <!-- VIEW DETAILS MODAL -->
     <div class="modal-overlay" id="view-details-modal-overlay">
-        <!-- Modal content remains the same -->
         <div class="modal" id="view-details-modal">
             <div class="modal-header">
                 <h3>Application Details</h3>
@@ -123,7 +122,6 @@
 
             mobileMenuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
 
-            // UPDATE: Logout button now uses Firebase signOut
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 Swal.fire({
@@ -131,7 +129,7 @@
                     confirmButtonText: 'Logout', cancelButtonText: 'Cancel'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        signOut(auth); // This will trigger onAuthStateChanged to redirect
+                        signOut(auth);
                     }
                 });
             });
@@ -256,7 +254,6 @@
                     tableBody.appendChild(tr);
                 });
             }, (error) => {
-                // This error handler is crucial for debugging security rule issues
                 console.error("Firestore onSnapshot error:", error);
                 Swal.fire('Database Error', 'Could not fetch applications. Check permissions.', 'error');
             });
