@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Link to your single, complete CSS file -->
     <link rel="stylesheet" href="css/adminpage.css">
     
     <!-- SweetAlert2 for modern alerts -->
@@ -27,9 +26,11 @@
                 <ul>
                     <li><a href="adminpage.html" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
                     <li><a href="JobApplication.html"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
-                    <li><a href="news-management.html"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
-                    <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    
+                    <!-- UPDATED: Added 'coming-soon-link' class to these links -->
+                    <li><a href="news-management.html" class="coming-soon-link"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
+                    <li><a href="#" class="coming-soon-link"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
+                    <li><a href="#" class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer"><a class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></div>
@@ -46,6 +47,7 @@
 
             <!-- STATS SECTION -->
             <section class="stats-grid">
+                <!-- Stat cards remain the same -->
                 <div class="stat-card">
                     <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
                     <div class="stat-info">
@@ -104,6 +106,7 @@
 
     <!-- VIEW-ONLY DETAILS MODAL -->
     <div class="modal-overlay" id="view-details-modal-overlay">
+        <!-- Modal content remains the same -->
         <div class="modal" id="view-details-modal">
             <div class="modal-header"><h3>Application Details</h3><button class="modal-close" id="view-details-close-btn">×</button></div>
             <div class="modal-body details-modal-body">
@@ -160,6 +163,20 @@
                     title: 'Logout?', icon: 'question', showCancelButton: true,
                     confirmButtonText: 'Yes, Logout', cancelButtonText: 'Cancel'
                 }).then((result) => { if (result.isConfirmed) { signOut(auth); } });
+            });
+
+            // === NEW: "UNDER MAINTENANCE" MODAL LOGIC ===
+            const comingSoonLinks = document.querySelectorAll('.coming-soon-link');
+            comingSoonLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // This is crucial to stop the link from navigating
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Feature Under Development',
+                        text: 'This feature is currently under maintenance and will be available in a future update. Thank you for your patience!',
+                        confirmButtonText: 'Got it!'
+                    });
+                });
             });
 
             const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
