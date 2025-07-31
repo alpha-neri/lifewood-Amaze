@@ -144,7 +144,7 @@
         </div>
     </div>
 
-    <script type="module">
+  <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -153,9 +153,30 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- NEW SECURITY ENHANCEMENT: PART 1 ---
+        // This handles the browser's back/forward cache (bfcache).
+        // If a user logs out, then hits "back", the page might be restored from the cache.
+        // This forces a reload if the page is from the cache AND the user is no longer authenticated.
+        window.addEventListener('pageshow', function(event) {
+            // event.persisted is true if the page was restored from the bfcache.
+            if (event.persisted && !auth.currentUser) {
+                // If the page is cached and the user is logged out, force a full reload.
+                // The reload will then trigger the onAuthStateChanged check below.
+                window.location.reload();
+            }
+        });
+
+        // --- MODIFIED SECURITY ENHANCEMENT: PART 2 ---
+        // This is the primary authentication gatekeeper.
         onAuthStateChanged(auth, (user) => {
-            if (user) initializeDashboard(user);
-            else window.location.href = 'admin.html';
+            if (user) {
+                // If the user is authenticated, initialize the dashboard.
+                initializeDashboard(user);
+            } else {
+                // If there is no authenticated user, redirect to the login page.
+                // We use replace() to prevent the user from navigating back to the dashboard page.
+                window.location.replace('admin.html');
+            }
         });
 
         function initializeDashboard(user) {
@@ -263,17 +284,15 @@
                         viewDetailsModalOverlay.classList.add('active');
                     }
                 } else if (button.classList.contains('accept')) {
-                    // --- MODIFIED: This block no longer sends an email ---
                     button.disabled = true;
                     button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Updating...`;
                     try {
-                        // The emailjs.send() line has been removed.
                         await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
                         showToast('success', 'Status updated to Accepted!');
                     } catch (error) {
                         console.error("Acceptance Update Error:", error);
                         showToast('error', 'Could not update status.');
-                        button.disabled = false; // Re-enable only on failure
+                        button.disabled = false;
                         button.innerHTML = `<i class="fas fa-check"></i> Accept`;
                     }
                 } else if (button.classList.contains('reject')) {
