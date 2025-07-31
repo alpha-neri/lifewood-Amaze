@@ -12,7 +12,8 @@
     
     <link rel="stylesheet" href="css/adminpage.css">
     
-    <!-- SweetAlert2 for modern alerts -->
+    <!-- External Libraries -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Load Firebase Config Separately -->
     <script src="js/firebase-config.js"></script>
@@ -24,89 +25,81 @@
             <div class="sidebar-header"><a href="index.html" class="nav-logo"><span class="logo-icon"></span>lifewood</a></div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="adminpage.html" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-                    <li><a href="JobApplication.html"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
+                    <!-- UPDATED: Added data-view attributes for JS view switching -->
+                    <li><a data-view="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a data-view="applications"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
                     
-                    <!-- UPDATED: Added 'coming-soon-link' class to these links -->
-                    <li><a href="news-management.html" class="coming-soon-link"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
-                    <li><a href="#" class="coming-soon-link"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
-                    <li><a href="#" class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <!-- UPDATED: Added 'coming-soon-link' class for disabled features -->
+                    <li><a class="coming-soon-link"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
+                    <li><a class="coming-soon-link"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
+                    <li><a class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer"><a class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></div>
         </aside>
 
-        <main class="main-content">
+        <main class="main-content" id="main-content">
             <header class="main-header">
                 <div class="header-left">
                     <button class="mobile-menu-toggle" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
-                    <h1>Dashboard</h1>
+                    <h1 id="main-header-title">Dashboard</h1>
                 </div>
                 <div class="user-profile"><span>Welcome, Admin</span><div class="avatar"><i class="fas fa-user"></i></div></div>
             </header>
 
-            <!-- STATS SECTION -->
-            <section class="stats-grid">
-                <!-- Stat cards remain the same -->
-                <div class="stat-card">
-                    <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="total-applicants-stat">0</span>
-                        <span class="stat-title">Total Applicants</span>
+            <!-- ==== VIEW 1: DASHBOARD (Visible by default) ==== -->
+            <div id="view-dashboard" class="view-panel active">
+                <section class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="total-applicants-stat">0</span><span class="stat-title">Total Applicants</span></div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-accepted"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="accepted-stat">0</span>
-                        <span class="stat-title">Accepted</span>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-accepted"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="accepted-stat">0</span><span class="stat-title">Accepted</span></div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="rejected-stat">0</span>
-                        <span class="stat-title">Rejected</span>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="rejected-stat">0</span><span class="stat-title">Rejected</span></div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="pending-stat">0</span>
-                        <span class="stat-title">Pending Review</span>
+                    <div class="stat-card">
+                        <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="pending-stat">0</span><span class="stat-title">Pending Review</span></div>
                     </div>
-                </div>
-                 <div class="stat-card">
-                    <div class="stat-icon icon-positions"><i class="fas fa-briefcase"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="positions-stat">0</span>
-                        <span class="stat-title">Unique Positions</span>
+                     <div class="stat-card">
+                        <div class="stat-icon icon-positions"><i class="fas fa-briefcase"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="positions-stat">0</span><span class="stat-title">Unique Positions</span></div>
                     </div>
-                </div>
-            </section>
+                </section>
+                <section class="content-panel">
+                    <div class="panel-header"><h3>Recent Job Applications</h3></div>
+                    <div class="table-responsive">
+                        <table id="dashboard-applications-table">
+                            <thead><tr><th>Applicant Name</th><th>Position</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
-            <section class="content-panel">
-                <div class="panel-header"><h3>Recent Job Applications</h3></div>
-                <div class="table-responsive">
-                    <table id="applications-table">
-                        <thead>
-                            <tr>
-                                <th>Applicant Name</th>
-                                <th>Position</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
+            <!-- ==== VIEW 2: JOB APPLICATIONS (Hidden by default) ==== -->
+            <div id="view-applications" class="view-panel">
+                <section class="content-panel">
+                    <div class="panel-header"><h3>All Applications</h3></div>
+                    <div class="table-responsive">
+                        <table id="full-applications-table">
+                            <thead><tr><th>Applicant Name</th><th>Position</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
         </main>
     </div>
 
-    <!-- VIEW-ONLY DETAILS MODAL -->
+    <!-- VIEW-ONLY DETAILS MODAL (Shared by both views) -->
     <div class="modal-overlay" id="view-details-modal-overlay">
-        <!-- Modal content remains the same -->
         <div class="modal" id="view-details-modal">
             <div class="modal-header"><h3>Application Details</h3><button class="modal-close" id="view-details-close-btn">×</button></div>
             <div class="modal-body details-modal-body">
@@ -122,16 +115,17 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- CONSOLIDATED JAVASCRIPT LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- AUTHENTICATION GATEKEEPER ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 initializeDashboard(user);
@@ -140,109 +134,226 @@
             }
         });
 
+        // --- All page logic is now wrapped in this single function ---
         function initializeDashboard(user) {
+            // --- Initialize EmailJS ---
+            emailjs.init('yXnRaoxKZm9Y31L2-');
+
+            // --- Get DOM Elements ---
+            const mainContent = document.getElementById('main-content');
             const sidebar = document.getElementById('sidebar');
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const logoutBtn = document.querySelector('.logout-btn');
-            const tableBody = document.querySelector('#applications-table tbody');
+            const mainHeaderTitle = document.getElementById('main-header-title');
+            
+            // View Panels
+            const viewDashboard = document.getElementById('view-dashboard');
+            const viewApplications = document.getElementById('view-applications');
+            const viewPanels = document.querySelectorAll('.view-panel');
+
+            // Tables
+            const dashboardTableBody = document.querySelector('#dashboard-applications-table tbody');
+            const fullTableBody = document.querySelector('#full-applications-table tbody');
+            
+            // Badges & Stats
             const appCountBadge = document.getElementById('application-count-badge');
-            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
-            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
-            const mainContent = document.querySelector('.main-content');
             const totalApplicantsStat = document.getElementById('total-applicants-stat');
             const acceptedStat = document.getElementById('accepted-stat');
             const rejectedStat = document.getElementById('rejected-stat');
             const pendingStat = document.getElementById('pending-stat');
             const positionsStat = document.getElementById('positions-stat');
             
+            // Modal
+            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
+            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
+
+            // --- Helper Functions ---
+            const showToast = (icon, title) => Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true }).fire({ icon, title });
+            const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
+            const closeViewDetailsModal = () => viewDetailsModalOverlay.classList.remove('active');
+
+            // --- General Event Listeners ---
             mobileMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
-            mainContent.addEventListener('click', () => { if (sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
+            mainContent.addEventListener('click', (e) => { if (sidebar.classList.contains('open') && !e.target.closest('.admin-sidebar')) sidebar.classList.remove('open'); });
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                Swal.fire({
-                    title: 'Logout?', icon: 'question', showCancelButton: true,
-                    confirmButtonText: 'Yes, Logout', cancelButtonText: 'Cancel'
-                }).then((result) => { if (result.isConfirmed) { signOut(auth); } });
+                Swal.fire({ title: 'Logout?', icon: 'question', showCancelButton: true, confirmButtonText: 'Yes, Logout', cancelButtonText: 'Cancel' }).then((result) => { if (result.isConfirmed) { signOut(auth); } });
             });
+            viewDetailsCloseBtn.addEventListener('click', closeViewDetailsModal);
+            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) closeViewDetailsModal(); });
 
-            // === NEW: "UNDER MAINTENANCE" MODAL LOGIC ===
-            const comingSoonLinks = document.querySelectorAll('.coming-soon-link');
-            comingSoonLinks.forEach(link => {
+            // --- "Coming Soon" Feature Listener ---
+            document.querySelectorAll('.coming-soon-link').forEach(link => {
                 link.addEventListener('click', (e) => {
-                    e.preventDefault(); // This is crucial to stop the link from navigating
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Feature Under Development',
-                        text: 'This feature is currently under maintenance and will be available in a future update. Thank you for your patience!',
-                        confirmButtonText: 'Got it!'
-                    });
+                    e.preventDefault();
+                    Swal.fire({ icon: 'info', title: 'Feature Under Development', text: 'This feature will be available in a future update. Thank you!', confirmButtonText: 'Got it!' });
                 });
             });
 
-            const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
-            const closeViewDetailsModal = () => viewDetailsModalOverlay.classList.remove('active');
-            viewDetailsCloseBtn.addEventListener('click', closeViewDetailsModal);
-            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) closeViewDetailsModal(); });
-            
-            tableBody.addEventListener('click', async (e) => {
-                const targetButton = e.target.closest('button.view-details');
+            // --- VIEW SWITCHING LOGIC ---
+            document.querySelectorAll('.sidebar-nav a[data-view]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewId = link.dataset.view;
+
+                    // Update active link style
+                    document.querySelectorAll('.sidebar-nav a[data-view]').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+
+                    // Switch visible panel
+                    viewPanels.forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(`view-${viewId}`).classList.add('active');
+
+                    // Update header title
+                    mainHeaderTitle.textContent = link.querySelector('span').textContent;
+                });
+            });
+
+            // --- MAIN ACTION EVENT LISTENER (delegated to main content area) ---
+            mainContent.addEventListener('click', async (e) => {
+                const targetButton = e.target.closest('button.btn-action');
                 if (!targetButton) return;
-                const docId = targetButton.dataset.id;
-                const docRef = doc(db, "job-applications", docId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const appData = docSnap.data();
-                    document.getElementById('detail-name').textContent = `${appData.firstName} ${appData.lastName}`;
-                    document.getElementById('detail-email').textContent = appData.email || 'N/A';
-                    document.getElementById('detail-age').textContent = appData.age || 'N/A';
-                    document.getElementById('detail-degree').textContent = appData.degree || 'N/A';
-                    document.getElementById('detail-experience').textContent = appData.experience || 'Not provided';
-                    document.getElementById('detail-available-from').textContent = appData.availableFrom || 'N/A';
-                    document.getElementById('detail-available-to').textContent = appData.availableTo || 'Not specified';
-                    document.getElementById('detail-resume').innerHTML = `<a href="${appData.resumeLink}" target="_blank">${appData.resumeLink}</a>`;
-                    openViewDetailsModal();
-                } else {
-                    Swal.fire('Error', 'Could not find the application details.', 'error');
+
+                const { id, name, email, position } = targetButton.dataset;
+                if (!id) return;
+
+                // View Details (works for both tables)
+                if (targetButton.classList.contains('view-details')) {
+                    const docRef = doc(db, "job-applications", id);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const appData = docSnap.data();
+                        document.getElementById('detail-name').textContent = `${appData.firstName} ${appData.lastName}`;
+                        document.getElementById('detail-email').textContent = appData.email || 'N/A';
+                        document.getElementById('detail-age').textContent = appData.age || 'N/A';
+                        document.getElementById('detail-degree').textContent = appData.degree || 'N/A';
+                        document.getElementById('detail-experience').textContent = appData.experience || 'Not provided';
+                        document.getElementById('detail-available-from').textContent = appData.availableFrom || 'N/A';
+                        document.getElementById('detail-available-to').textContent = appData.availableTo || 'Not specified';
+                        document.getElementById('detail-resume').innerHTML = `<a href="${appData.resumeLink}" target="_blank">${appData.resumeLink}</a>`;
+                        openViewDetailsModal();
+                    } else { showToast('error', 'Could not find application data.'); }
+                }
+
+                // Accept Application
+                if (targetButton.classList.contains('accept')) {
+                    if (!email) { showToast('error', "Applicant's email is missing!"); return; }
+                    const templateParams = { name, email, position };
+                    try {
+                        targetButton.disabled = true;
+                        targetButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Accepting...`;
+                        await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
+                        await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
+                        showToast('success', 'Acceptance email sent!');
+                    } catch (error) {
+                        showToast('error', 'Could not send email.');
+                        targetButton.disabled = false;
+                        targetButton.innerHTML = `<i class="fas fa-check"></i> Accept`;
+                    }
+                }
+                
+                // Reject Application
+                if (targetButton.classList.contains('reject')) {
+                    if (!email) { showToast('error', "Applicant's email is missing!"); return; }
+                    Swal.fire({ title: 'Reject Application?', text: `This will send a rejection email to ${name}.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, Reject It' }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            const templateParams = { name, email, position };
+                            try {
+                                await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', templateParams);
+                                await updateDoc(doc(db, "job-applications", id), { status: 'rejected' });
+                                showToast('success', 'Rejection email sent!');
+                            } catch (error) { showToast('error', 'Could not send email.'); }
+                        }
+                    });
+                }
+
+                // Delete Application
+                if (targetButton.classList.contains('delete')) {
+                    Swal.fire({ title: 'Delete this application?', text: "This action is permanent and irreversible.", icon: 'error', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, Delete Forever!' }).then(async (result) => {
+                        if (result.isConfirmed) {
+                           try {
+                                await deleteDoc(doc(db, "job-applications", id));
+                                showToast('info', 'Application deleted.');
+                           } catch (error) { showToast('error', 'Could not delete application.'); }
+                        }
+                    });
                 }
             });
 
+            // --- FIREBASE DATA LISTENER (Populates everything) ---
             const q = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
             onSnapshot(q, (snapshot) => {
-                tableBody.innerHTML = ''; 
-                appCountBadge.textContent = snapshot.size;
-                let acceptedCount = 0;
-                let rejectedCount = 0;
-                let pendingCount = 0;
+                // Clear existing table data
+                dashboardTableBody.innerHTML = ''; 
+                fullTableBody.innerHTML = '';
+                
+                // Reset stats
+                let acceptedCount = 0, rejectedCount = 0, pendingCount = 0;
                 const positions = new Set();
+
                 if (snapshot.empty) {
-                    tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No applications found.</td></tr>`;
+                    const emptyRow = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No applications found.</td></tr>`;
+                    dashboardTableBody.innerHTML = emptyRow;
+                    fullTableBody.innerHTML = emptyRow;
                 } else {
-                    snapshot.docs.forEach((docSnapshot, index) => {
+                    // Get all documents
+                    const allDocs = snapshot.docs;
+
+                    // --- Populate Both Tables and Calculate Stats ---
+                    allDocs.forEach((docSnapshot, index) => {
                         const app = docSnapshot.data();
+                        const docId = docSnapshot.id;
                         const status = app.status || 'pending';
+                        const applicantName = `${app.firstName} ${app.lastName}`;
+                        const applicantEmail = app.email || ''; 
+
+                        // Calculate stats
                         switch(status) {
                             case 'accepted': acceptedCount++; break;
                             case 'rejected': rejectedCount++; break;
                             case 'pending': pendingCount++; break;
                         }
                         if (app.position) positions.add(app.position);
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${app.firstName} ${app.lastName}</td>
-                            <td>${app.position}</td>
-                            <td><span class="status-badge status-${status}">${status}</span></td>
-                            <td><div class="action-buttons"><button class="btn-action view-details" data-id="${docSnapshot.id}"><i class="fas fa-eye"></i> View</button></div></td>
-                        `;
-                        tr.style.animationDelay = `${index * 50}ms`;
-                        tr.classList.add('row-visible');
-                        tableBody.appendChild(tr);
+                        
+                        // --- 1. Render Full Applications Table Row ---
+                        const fullTr = document.createElement('tr');
+                        const statusHtml = `<span class="status-badge status-${status}">${status}</span>`;
+                        let actionsHtml = `<button class="btn-action view-details" data-id="${docId}"><i class="fas fa-eye"></i> View Details</button>`;
+                        if (status === 'pending') {
+                            actionsHtml += `<button class="btn-action accept" data-id="${docId}" data-name="${applicantName}" data-email="${applicantEmail}" data-position="${app.position}"><i class="fas fa-check"></i> Accept</button>`;
+                            actionsHtml += `<button class="btn-action reject" data-id="${docId}" data-name="${applicantName}" data-email="${applicantEmail}" data-position="${app.position}"><i class="fas fa-times"></i> Reject</button>`;
+                        } else {
+                            actionsHtml += `<button class="btn-action delete" data-id="${docId}"><i class="fas fa-trash-alt"></i> Delete</button>`;
+                        }
+                        fullTr.innerHTML = `<td>${applicantName}</td><td>${app.position}</td><td>${statusHtml}</td><td><div class="action-buttons">${actionsHtml}</div></td>`;
+                        fullTr.style.animationDelay = `${index * 50}ms`;
+                        fullTr.classList.add('row-visible');
+                        fullTableBody.appendChild(fullTr);
+
+                        // --- 2. Render Dashboard Table Row (only first 5) ---
+                        if (index < 5) {
+                            const dashTr = document.createElement('tr');
+                            dashTr.innerHTML = `
+                                <td>${applicantName}</td>
+                                <td>${app.position}</td>
+                                <td>${statusHtml}</td>
+                                <td><div class="action-buttons"><button class="btn-action view-details" data-id="${docId}"><i class="fas fa-eye"></i> View</button></div></td>
+                            `;
+                            dashTr.style.animationDelay = `${index * 50}ms`;
+                            dashTr.classList.add('row-visible');
+                            dashboardTableBody.appendChild(dashTr);
+                        }
                     });
                 }
+                
+                // Update all UI elements with new counts
+                appCountBadge.textContent = snapshot.size;
                 totalApplicantsStat.textContent = snapshot.size;
                 acceptedStat.textContent = acceptedCount;
                 rejectedStat.textContent = rejectedCount;
                 pendingStat.textContent = pendingCount;
                 positionsStat.textContent = positions.size;
+
             }, (error) => {
                 console.error("Error fetching applications:", error);
                 Swal.fire('Database Error', 'Could not fetch applications from the database.', 'error');
