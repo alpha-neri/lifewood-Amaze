@@ -25,11 +25,8 @@
             <div class="sidebar-header"><a href="index.html" class="nav-logo"><span class="logo-icon"></span>lifewood</a></div>
             <nav class="sidebar-nav">
                 <ul>
-                    <!-- UPDATED: Added data-view attributes for JS view switching -->
                     <li><a data-view="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
                     <li><a data-view="applications"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
-                    
-                    <!-- UPDATED: Added 'coming-soon-link' class for disabled features -->
                     <li><a class="coming-soon-link"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
                     <li><a class="coming-soon-link"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
                     <li><a class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
@@ -47,10 +44,10 @@
                 <div class="user-profile"><span>Welcome, Admin</span><div class="avatar"><i class="fas fa-user"></i></div></div>
             </header>
 
-            <!-- ==== VIEW 1: DASHBOARD (Visible by default) ==== -->
+            <!-- ==== VIEW 1: DASHBOARD ==== -->
             <div id="view-dashboard" class="view-panel active">
                 <section class="stats-grid">
-                    <div class="stat-card">
+                     <div class="stat-card">
                         <div class="stat-icon icon-total"><i class="fas fa-users"></i></div>
                         <div class="stat-info"><span class="stat-value" id="total-applicants-stat">0</span><span class="stat-title">Total Applicants</span></div>
                     </div>
@@ -62,7 +59,7 @@
                         <div class="stat-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
                         <div class="stat-info"><span class="stat-value" id="rejected-stat">0</span><span class="stat-title">Rejected</span></div>
                     </div>
-                    <div class="stat-card">
+                     <div class="stat-card">
                         <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
                         <div class="stat-info"><span class="stat-value" id="pending-stat">0</span><span class="stat-title">Pending Review</span></div>
                     </div>
@@ -82,7 +79,7 @@
                 </section>
             </div>
 
-            <!-- ==== VIEW 2: JOB APPLICATIONS (Hidden by default) ==== -->
+            <!-- ==== VIEW 2: JOB APPLICATIONS ==== -->
             <div id="view-applications" class="view-panel">
                 <section class="content-panel">
                     <div class="panel-header"><h3>All Applications</h3></div>
@@ -94,28 +91,59 @@
                     </div>
                 </section>
             </div>
-
         </main>
     </div>
 
-    <!-- VIEW-ONLY DETAILS MODAL (Shared by both views) -->
+    <!-- VIEW DETAILS MODAL -->
     <div class="modal-overlay" id="view-details-modal-overlay">
         <div class="modal" id="view-details-modal">
             <div class="modal-header"><h3>Application Details</h3><button class="modal-close" id="view-details-close-btn">×</button></div>
             <div class="modal-body details-modal-body">
+                <div class="detail-field" id="interview-status-field">
+                    <span class="detail-label">Interview Status</span>
+                    <span class="detail-value" id="detail-interview-status">-</span>
+                </div>
                 <div class="detail-field"><span class="detail-label">Full Name</span><span class="detail-value" id="detail-name">-</span></div>
                 <div class="detail-field"><span class="detail-label">Email</span><span class="detail-value" id="detail-email">-</span></div>
                 <div class="detail-field"><span class="detail-label">Age</span><span class="detail-value" id="detail-age">-</span></div>
                 <div class="detail-field"><span class="detail-label">Highest Degree</span><span class="detail-value" id="detail-degree">-</span></div>
                 <div class="detail-field"><span class="detail-label">Resume Link</span><span class="detail-value" id="detail-resume">-</span></div>
-                <div class="detail-field"><span class="detail-label">Available From</span><span class="detail-value" id="detail-available-from">-</span></div>
-                <div class="detail-field"><span class="detail-label">Available To</span><span class="detail-value" id="detail-available-to">-</span></div>
                 <div class="detail-field"><span class="detail-label">Relevant Experience</span><div class="detail-value-experience" id="detail-experience">-</div></div>
             </div>
         </div>
     </div>
 
-    <!-- CONSOLIDATED JAVASCRIPT LOGIC -->
+    <!-- SCHEDULE INTERVIEW MODAL -->
+    <div class="modal-overlay" id="schedule-modal-overlay">
+        <div class="modal" id="schedule-modal">
+            <div class="modal-header"><h3>Schedule Interview</h3><button class="modal-close" id="schedule-modal-close-btn">×</button></div>
+            <div class="modal-body">
+                <form id="schedule-form">
+                    <div class="schedule-form-group">
+                        <label for="interview-date">Interview Date</label>
+                        <input type="date" id="interview-date" required>
+                    </div>
+                    <div class="schedule-form-group">
+                        <label for="interview-time">Interview Time</label>
+                        <input type="time" id="interview-time" required>
+                    </div>
+                    <div class="schedule-form-group">
+                        <label for="interview-method">Interview Method</label>
+                        <select id="interview-method" required>
+                            <option value="Google Meet">Google Meet Call</option>
+                            <option value="Zoom">Zoom Call</option>
+                            <option value="Phone Call">Phone Call</option>
+                            <option value="In-Person at Office">In-Person at Office</option>
+                        </select>
+                    </div>
+                    <div class="schedule-modal-actions">
+                        <button type="submit" class="btn-confirm-schedule" id="confirm-schedule-btn">Confirm & Send Invite</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -125,238 +153,212 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- AUTHENTICATION GATEKEEPER ---
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                initializeDashboard(user);
-            } else {
-                window.location.href = 'admin.html';
-            }
+            if (user) initializeDashboard(user);
+            else window.location.href = 'admin.html';
         });
 
-        // --- All page logic is now wrapped in this single function ---
         function initializeDashboard(user) {
-            // --- Initialize EmailJS ---
             emailjs.init('yXnRaoxKZm9Y31L2-');
-
-            // --- Get DOM Elements ---
+            
             const mainContent = document.getElementById('main-content');
             const sidebar = document.getElementById('sidebar');
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const logoutBtn = document.querySelector('.logout-btn');
             const mainHeaderTitle = document.getElementById('main-header-title');
-            
-            // View Panels
-            const viewDashboard = document.getElementById('view-dashboard');
-            const viewApplications = document.getElementById('view-applications');
-            const viewPanels = document.querySelectorAll('.view-panel');
-
-            // Tables
-            const dashboardTableBody = document.querySelector('#dashboard-applications-table tbody');
-            const fullTableBody = document.querySelector('#full-applications-table tbody');
-            
-            // Badges & Stats
-            const appCountBadge = document.getElementById('application-count-badge');
-            const totalApplicantsStat = document.getElementById('total-applicants-stat');
-            const acceptedStat = document.getElementById('accepted-stat');
-            const rejectedStat = document.getElementById('rejected-stat');
-            const pendingStat = document.getElementById('pending-stat');
-            const positionsStat = document.getElementById('positions-stat');
-            
-            // Modal
             const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
             const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
+            const scheduleModalOverlay = document.getElementById('schedule-modal-overlay');
+            const scheduleModalCloseBtn = document.getElementById('schedule-modal-close-btn');
+            const scheduleForm = document.getElementById('schedule-form');
+            const confirmScheduleBtn = document.getElementById('confirm-schedule-btn');
 
-            // --- Helper Functions ---
             const showToast = (icon, title) => Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true }).fire({ icon, title });
-            const openViewDetailsModal = () => viewDetailsModalOverlay.classList.add('active');
-            const closeViewDetailsModal = () => viewDetailsModalOverlay.classList.remove('active');
+            const openScheduleModal = () => scheduleModalOverlay.classList.add('active');
+            const closeScheduleModal = () => scheduleModalOverlay.classList.remove('active');
 
-            // --- General Event Listeners ---
             mobileMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
-            mainContent.addEventListener('click', (e) => { if (sidebar.classList.contains('open') && !e.target.closest('.admin-sidebar')) sidebar.classList.remove('open'); });
+            mainContent.addEventListener('click', () => { if (sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                Swal.fire({ title: 'Logout?', icon: 'question', showCancelButton: true, confirmButtonText: 'Yes, Logout', cancelButtonText: 'Cancel' }).then((result) => { if (result.isConfirmed) { signOut(auth); } });
+                Swal.fire({ title: 'Logout?', icon: 'question', showCancelButton: true, confirmButtonText: 'Yes, Logout' }).then((result) => { if (result.isConfirmed) signOut(auth); });
             });
-            viewDetailsCloseBtn.addEventListener('click', closeViewDetailsModal);
-            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) closeViewDetailsModal(); });
+            viewDetailsCloseBtn.addEventListener('click', () => viewDetailsModalOverlay.classList.remove('active'));
+            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) viewDetailsModalOverlay.classList.remove('active'); });
+            scheduleModalCloseBtn.addEventListener('click', closeScheduleModal);
+            scheduleModalOverlay.addEventListener('click', (e) => { if (e.target === scheduleModalOverlay) closeScheduleModal(); });
 
-            // --- "Coming Soon" Feature Listener ---
-            document.querySelectorAll('.coming-soon-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    Swal.fire({ icon: 'info', title: 'Feature Under Development', text: 'This feature will be available in a future update. Thank you!', confirmButtonText: 'Got it!' });
-                });
-            });
-
-            // --- VIEW SWITCHING LOGIC ---
             document.querySelectorAll('.sidebar-nav a[data-view]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const viewId = link.dataset.view;
-
-                    // Update active link style
                     document.querySelectorAll('.sidebar-nav a[data-view]').forEach(l => l.classList.remove('active'));
                     link.classList.add('active');
-
-                    // Switch visible panel
-                    viewPanels.forEach(panel => panel.classList.remove('active'));
-                    document.getElementById(`view-${viewId}`).classList.add('active');
-
-                    // Update header title
+                    document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(`view-${link.dataset.view}`).classList.add('active');
                     mainHeaderTitle.textContent = link.querySelector('span').textContent;
                 });
             });
+            document.querySelectorAll('.coming-soon-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    Swal.fire({ icon: 'info', title: 'Feature Under Development', text: 'This feature will be available soon.' });
+                });
+            });
+            
+            scheduleForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const { docId, name, email, position } = scheduleForm.dataset;
+                const interviewDate = document.getElementById('interview-date').value;
+                const interviewTime = document.getElementById('interview-time').value;
+                const interviewMethod = document.getElementById('interview-method').value;
+                if (!docId || !interviewDate || !interviewTime) return showToast('error', 'Please fill all fields.');
+                const templateParams = { name, email, position, interview_date: new Date(interviewDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), interview_time: new Date(`1970-01-01T${interviewTime}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }), interview_method: interviewMethod };
+                confirmScheduleBtn.disabled = true;
+                confirmScheduleBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
+                try {
+                    await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
+                    await updateDoc(doc(db, "job-applications", docId), { status: 'scheduled', interviewDate, interviewTime, interviewMethod });
+                    showToast('success', 'Interview scheduled and invite sent!');
+                    closeScheduleModal();
+                } catch (error) { 
+                    console.error("Scheduling Error:", error);
+                    showToast('error', 'Failed to send invite. Check console for details.'); 
+                } finally {
+                    confirmScheduleBtn.disabled = false;
+                    confirmScheduleBtn.textContent = 'Confirm & Send Invite';
+                }
+            });
 
-            // --- MAIN ACTION EVENT LISTENER (delegated to main content area) ---
             mainContent.addEventListener('click', async (e) => {
-                const targetButton = e.target.closest('button.btn-action');
-                if (!targetButton) return;
-
-                const { id, name, email, position } = targetButton.dataset;
+                const button = e.target.closest('button.btn-action');
+                if (!button) return;
+                const { id, name, email, position } = button.dataset;
                 if (!id) return;
 
-                // View Details (works for both tables)
-                if (targetButton.classList.contains('view-details')) {
-                    const docRef = doc(db, "job-applications", id);
-                    const docSnap = await getDoc(docRef);
+                if (button.classList.contains('schedule')) {
+                    scheduleForm.reset();
+                    Object.assign(scheduleForm.dataset, { docId: id, name, email, position });
+                    openScheduleModal();
+                } else if (button.classList.contains('view-details')) {
+                    const docSnap = await getDoc(doc(db, "job-applications", id));
                     if (docSnap.exists()) {
-                        const appData = docSnap.data();
-                        document.getElementById('detail-name').textContent = `${appData.firstName} ${appData.lastName}`;
-                        document.getElementById('detail-email').textContent = appData.email || 'N/A';
-                        document.getElementById('detail-age').textContent = appData.age || 'N/A';
-                        document.getElementById('detail-degree').textContent = appData.degree || 'N/A';
-                        document.getElementById('detail-experience').textContent = appData.experience || 'Not provided';
-                        document.getElementById('detail-available-from').textContent = appData.availableFrom || 'N/A';
-                        document.getElementById('detail-available-to').textContent = appData.availableTo || 'Not specified';
-                        document.getElementById('detail-resume').innerHTML = `<a href="${appData.resumeLink}" target="_blank">${appData.resumeLink}</a>`;
-                        openViewDetailsModal();
-                    } else { showToast('error', 'Could not find application data.'); }
-                }
-
-                // Accept Application
-                if (targetButton.classList.contains('accept')) {
-                    if (!email) { showToast('error', "Applicant's email is missing!"); return; }
-                    const templateParams = { name, email, position };
-                    try {
-                        targetButton.disabled = true;
-                        targetButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Accepting...`;
-                        await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
-                        await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
-                        showToast('success', 'Acceptance email sent!');
-                    } catch (error) {
-                        showToast('error', 'Could not send email.');
-                        targetButton.disabled = false;
-                        targetButton.innerHTML = `<i class="fas fa-check"></i> Accept`;
+                        const data = docSnap.data();
+                        const interviewStatusEl = document.getElementById('detail-interview-status');
+                        
+                        if (data.interviewDate && data.interviewTime) {
+                            const date = new Date(data.interviewDate).toLocaleDateString('en-US', { dateStyle: 'long' });
+                            const time = new Date(`1970-01-01T${data.interviewTime}`).toLocaleTimeString('en-US', { timeStyle: 'short' });
+                            interviewStatusEl.innerHTML = `<strong>Scheduled:</strong> ${date} at ${time} via ${data.interviewMethod}`;
+                        } else {
+                            interviewStatusEl.textContent = 'Pending';
+                        }
+                        
+                        document.getElementById('detail-name').textContent = `${data.firstName} ${data.lastName}`;
+                        document.getElementById('detail-email').textContent = data.email || 'N/A';
+                        document.getElementById('detail-age').textContent = data.age || 'N/A';
+                        document.getElementById('detail-degree').textContent = data.degree || 'N/A';
+                        document.getElementById('detail-experience').textContent = data.experience || 'Not provided';
+                        document.getElementById('detail-resume').innerHTML = `<a href="${data.resumeLink}" target="_blank" rel="noopener noreferrer">${data.resumeLink}</a>`;
+                        
+                        viewDetailsModalOverlay.classList.add('active');
                     }
-                }
-                
-                // Reject Application
-                if (targetButton.classList.contains('reject')) {
-                    if (!email) { showToast('error', "Applicant's email is missing!"); return; }
-                    Swal.fire({ title: 'Reject Application?', text: `This will send a rejection email to ${name}.`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, Reject It' }).then(async (result) => {
+                } else if (button.classList.contains('accept')) {
+                    // --- MODIFIED: This block no longer sends an email ---
+                    button.disabled = true;
+                    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Updating...`;
+                    try {
+                        // The emailjs.send() line has been removed.
+                        await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
+                        showToast('success', 'Status updated to Accepted!');
+                    } catch (error) {
+                        console.error("Acceptance Update Error:", error);
+                        showToast('error', 'Could not update status.');
+                        button.disabled = false; // Re-enable only on failure
+                        button.innerHTML = `<i class="fas fa-check"></i> Accept`;
+                    }
+                } else if (button.classList.contains('reject')) {
+                    Swal.fire({ title: 'Reject Application?', text: "This will send a polite rejection email.", icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, Reject' }).then(async (result) => {
                         if (result.isConfirmed) {
-                            const templateParams = { name, email, position };
                             try {
+                                const templateParams = { name, email, position };
                                 await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', templateParams);
                                 await updateDoc(doc(db, "job-applications", id), { status: 'rejected' });
                                 showToast('success', 'Rejection email sent!');
                             } catch (error) { showToast('error', 'Could not send email.'); }
                         }
                     });
-                }
-
-                // Delete Application
-                if (targetButton.classList.contains('delete')) {
-                    Swal.fire({ title: 'Delete this application?', text: "This action is permanent and irreversible.", icon: 'error', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, Delete Forever!' }).then(async (result) => {
+                } else if (button.classList.contains('delete')) {
+                    Swal.fire({ title: 'Delete Forever?', text: "This action is irreversible.", icon: 'error', showCancelButton: true, confirmButtonText: 'Yes, Delete' }).then(async (result) => {
                         if (result.isConfirmed) {
-                           try {
-                                await deleteDoc(doc(db, "job-applications", id));
-                                showToast('info', 'Application deleted.');
-                           } catch (error) { showToast('error', 'Could not delete application.'); }
+                            try { await deleteDoc(doc(db, "job-applications", id)); showToast('info', 'Application deleted.'); }
+                            catch (error) { showToast('error', 'Could not delete.'); }
                         }
                     });
                 }
             });
 
-            // --- FIREBASE DATA LISTENER (Populates everything) ---
             const q = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
             onSnapshot(q, (snapshot) => {
-                // Clear existing table data
-                dashboardTableBody.innerHTML = ''; 
+                const dashboardTableBody = document.querySelector('#dashboard-applications-table tbody');
+                const fullTableBody = document.querySelector('#full-applications-table tbody');
+                dashboardTableBody.innerHTML = '';
                 fullTableBody.innerHTML = '';
-                
-                // Reset stats
-                let acceptedCount = 0, rejectedCount = 0, pendingCount = 0;
+
+                let accepted = 0, rejected = 0, pending = 0, scheduled = 0;
                 const positions = new Set();
-
+                
                 if (snapshot.empty) {
-                    const emptyRow = `<tr><td colspan="4" style="text-align:center; padding: 20px;">No applications found.</td></tr>`;
-                    dashboardTableBody.innerHTML = emptyRow;
-                    fullTableBody.innerHTML = emptyRow;
+                    const noDataRow = `<tr><td colspan="4" class="no-data-message"><i class="fas fa-folder-open"></i><span>No applications submitted yet.</span></td></tr>`;
+                    dashboardTableBody.innerHTML = noDataRow;
+                    fullTableBody.innerHTML = noDataRow;
                 } else {
-                    // Get all documents
-                    const allDocs = snapshot.docs;
-
-                    // --- Populate Both Tables and Calculate Stats ---
-                    allDocs.forEach((docSnapshot, index) => {
-                        const app = docSnapshot.data();
-                        const docId = docSnapshot.id;
-                        const status = app.status || 'pending';
-                        const applicantName = `${app.firstName} ${app.lastName}`;
-                        const applicantEmail = app.email || ''; 
-
-                        // Calculate stats
-                        switch(status) {
-                            case 'accepted': acceptedCount++; break;
-                            case 'rejected': rejectedCount++; break;
-                            case 'pending': pendingCount++; break;
-                        }
-                        if (app.position) positions.add(app.position);
+                    snapshot.docs.forEach((docSnap, i) => {
+                        const app = docSnap.data();
+                        const { status = 'pending', firstName, lastName, position, email } = app;
+                        const applicantName = `${firstName} ${lastName}`;
                         
-                        // --- 1. Render Full Applications Table Row ---
-                        const fullTr = document.createElement('tr');
+                        if (status === 'accepted') accepted++; else if (status === 'rejected') rejected++;
+                        else if (status === 'scheduled') scheduled++; else pending++;
+                        if (position) positions.add(position);
+
                         const statusHtml = `<span class="status-badge status-${status}">${status}</span>`;
-                        let actionsHtml = `<button class="btn-action view-details" data-id="${docId}"><i class="fas fa-eye"></i> View Details</button>`;
+                        const baseRowHtml = `<td>${applicantName}</td><td>${position}</td><td>${statusHtml}</td>`;
+                        
+                        let fullActionsHtml = `<button class="btn-action view-details" data-id="${docSnap.id}"><i class="fas fa-eye"></i> View Details</button>`;
                         if (status === 'pending') {
-                            actionsHtml += `<button class="btn-action accept" data-id="${docId}" data-name="${applicantName}" data-email="${applicantEmail}" data-position="${app.position}"><i class="fas fa-check"></i> Accept</button>`;
-                            actionsHtml += `<button class="btn-action reject" data-id="${docId}" data-name="${applicantName}" data-email="${applicantEmail}" data-position="${app.position}"><i class="fas fa-times"></i> Reject</button>`;
+                            fullActionsHtml += `<button class="btn-action schedule" data-id="${docSnap.id}" data-name="${applicantName}" data-email="${email}" data-position="${position}"><i class="fas fa-calendar-alt"></i> Schedule</button>`;
+                            fullActionsHtml += `<button class="btn-action reject" data-id="${docSnap.id}" data-name="${applicantName}" data-email="${email}" data-position="${position}"><i class="fas fa-times"></i> Reject</button>`;
+                        } else if (status === 'scheduled') {
+                            fullActionsHtml += `<button class="btn-action accept" data-id="${docSnap.id}" data-name="${applicantName}" data-email="${email}" data-position="${position}"><i class="fas fa-check"></i> Accept</button>`;
+                            fullActionsHtml += `<button class="btn-action reject" data-id="${docSnap.id}" data-name="${applicantName}" data-email="${email}" data-position="${position}"><i class="fas fa-times"></i> Reject</button>`;
                         } else {
-                            actionsHtml += `<button class="btn-action delete" data-id="${docId}"><i class="fas fa-trash-alt"></i> Delete</button>`;
+                            fullActionsHtml += `<button class="btn-action delete" data-id="${docSnap.id}"><i class="fas fa-trash-alt"></i> Delete</button>`;
                         }
-                        fullTr.innerHTML = `<td>${applicantName}</td><td>${app.position}</td><td>${statusHtml}</td><td><div class="action-buttons">${actionsHtml}</div></td>`;
-                        fullTr.style.animationDelay = `${index * 50}ms`;
+                        
+                        const dashboardActionsHtml = `<button class="btn-action view-details" data-id="${docSnap.id}"><i class="fas fa-eye"></i> View</button>`;
+
+                        const fullTr = document.createElement('tr');
+                        fullTr.innerHTML = `${baseRowHtml}<td><div class="action-buttons">${fullActionsHtml}</div></td>`;
+                        fullTr.style.animationDelay = `${i * 50}ms`;
                         fullTr.classList.add('row-visible');
                         fullTableBody.appendChild(fullTr);
 
-                        // --- 2. Render Dashboard Table Row (only first 5) ---
-                        if (index < 5) {
+                        if (i < 5) {
                             const dashTr = document.createElement('tr');
-                            dashTr.innerHTML = `
-                                <td>${applicantName}</td>
-                                <td>${app.position}</td>
-                                <td>${statusHtml}</td>
-                                <td><div class="action-buttons"><button class="btn-action view-details" data-id="${docId}"><i class="fas fa-eye"></i> View</button></div></td>
-                            `;
-                            dashTr.style.animationDelay = `${index * 50}ms`;
+                            dashTr.innerHTML = `${baseRowHtml}<td><div class="action-buttons">${dashboardActionsHtml}</div></td>`;
+                            dashTr.style.animationDelay = `${i * 50}ms`;
                             dashTr.classList.add('row-visible');
                             dashboardTableBody.appendChild(dashTr);
                         }
                     });
                 }
                 
-                // Update all UI elements with new counts
-                appCountBadge.textContent = snapshot.size;
-                totalApplicantsStat.textContent = snapshot.size;
-                acceptedStat.textContent = acceptedCount;
-                rejectedStat.textContent = rejectedCount;
-                pendingStat.textContent = pendingCount;
-                positionsStat.textContent = positions.size;
-
-            }, (error) => {
-                console.error("Error fetching applications:", error);
-                Swal.fire('Database Error', 'Could not fetch applications from the database.', 'error');
+                document.getElementById('application-count-badge').textContent = snapshot.size;
+                document.getElementById('total-applicants-stat').textContent = snapshot.size;
+                document.getElementById('accepted-stat').textContent = accepted;
+                document.getElementById('rejected-stat').textContent = rejected;
+                document.getElementById('pending-stat').textContent = pending + scheduled;
+                document.getElementById('positions-stat').textContent = positions.size;
             });
         }
     </script>
