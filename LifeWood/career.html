@@ -10,23 +10,234 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- CSS links (including your original career.css) -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/career.css">
+    <style>
+        /* --- Lifewood Main Stylesheet --- */
+        /* This file contains styles for all public-facing pages. */
+
+        /* --- :root VARIABLES --- */
+        :root {
+            /* Lifewood Brand Palette */
+            --paper: #f5eedb;
+            --white: #ffffff;
+            --sea-salt: #F9F7F7;
+            --dark-serpent: #133020;
+            --castleton-green: #046241;
+            --saffaron: #FFB347;
+            --earth-yellow: #FFC370;
+
+            /* Base Colors */
+            --text-dark: var(--dark-serpent);
+            --text-light: var(--white);
+            --bg-dark: var(--dark-serpent);
+            --accent-primary: var(--castleton-green);
+            --accent-secondary: var(--saffaron);
+            --border-color: #E5E7EB;
+
+            /* Typography & Layout */
+            --font-heading: 'Manrope', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+            --nav-height: 80px;
+        }
+
+
+        /* --- GLOBAL RESETS & BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: var(--font-body);
+            font-weight: 400;
+            color: var(--text-dark);
+            background-color: var(--white);
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        a { color: var(--accent-primary); text-decoration: none; transition: color 0.3s ease; }
+        a:hover { color: var(--accent-secondary); }
+
+        img { max-width: 100%; height: auto; }
+        section { padding: 100px 5%; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        main { padding-top: var(--nav-height); }
+
+
+        /* --- UTILITY & SHARED CLASSES --- */
+        .dark-section { background-color: var(--dark-serpent); }
+        .dark-section .section-title, .dark-section .section-subtitle, .dark-section h1, .dark-section h2, .dark-section h3, .dark-section h4 { color: var(--text-light); }
+        .dark-section .section-subtitle { opacity: 0.8; }
+        .section-title { text-align: center; font-size: 2.8rem; margin-bottom: 1rem; }
+        .section-subtitle { text-align: center; font-size: 1.15rem; color: #555; max-width: 650px; margin: 0 auto 60px auto; }
+
+        .btn {
+            display: inline-block; padding: 12px 30px;
+            background-color: var(--accent-primary);
+            color: var(--text-light);
+            border-radius: 8px;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            border: 2px solid var(--accent-primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn:hover { background-color: var(--accent-secondary); color: var(--text-dark); border-color: var(--accent-secondary); transform: translateY(-3px); }
+        .btn-accent { background-color: var(--accent-secondary); color: var(--text-dark); border-color: var(--accent-secondary); }
+        .btn-accent:hover { background-color: var(--accent-primary); border-color: var(--accent-primary); color: var(--text-light); }
+        .btn-outline { background-color: transparent; color: var(--accent-primary); border: 2px solid var(--accent-primary); }
+        .btn-outline:hover { background-color: var(--accent-primary); color: var(--text-light); border-color: var(--accent-primary); }
+
+
+        /* --- HEADER & NAVIGATION --- */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
+            transition: background 0.4s ease, box-shadow 0.4s ease, border-bottom 0.4s ease;
+        }
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(19, 48, 32, 0.1);
+        }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: var(--nav-height); max-width: 1300px; margin: 0 auto; padding: 0 20px; }
+        .nav-logo, .nav-link, .nav-toggle, .lang-btn, .lang-separator {
+            color: var(--text-light);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+            transition: color 0.4s ease, text-shadow 0.4s ease;
+        }
+        .header.scrolled .nav-logo, .header.scrolled .nav-link, .header.scrolled .nav-toggle, .header.scrolled .lang-btn, .header.scrolled .lang-separator {
+            color: var(--text-dark);
+            text-shadow: none;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 0.15em; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.05em; }
+        .logo-icon { display: inline-block; width: 0.7em; height: 1.0em; background-color: var(--accent-secondary); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); transition: transform 0.3s ease; }
+        .nav-logo:hover .logo-icon { transform: rotate(15deg); }
+        .nav-menu { display: flex; align-items: center; list-style: none; gap: 35px; }
+        .nav-link { font-family: var(--font-heading); font-weight: 600; position: relative; padding: 8px 0; letter-spacing: 0.02em; }
+        .nav-link.active-page { color: var(--saffaron); font-weight: 700; }
+        .header.scrolled .nav-link.active-page { color: var(--accent-primary); }
+        .language-switcher { display: flex; align-items: center; gap: 5px; }
+        .lang-btn { background: none; border: none; cursor: pointer; font-family: inherit; font-weight: 600; opacity: 0.7; }
+        .lang-btn.active { opacity: 1; font-weight: 800; color: var(--saffaron); }
+        .header.scrolled .lang-btn.active { color: var(--accent-primary); }
+        .nav-toggle { display: none; font-size: 1.5rem; cursor: pointer; z-index: 1002; }
+
+
+        /* --- CAREER PAGE SPECIFIC STYLES --- */
+        #careers-hero {
+            position: relative; padding: 140px 5% 120px; text-align: center;
+            color: var(--text-light); background: url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
+        }
+        #careers-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(19, 48, 32, 0.92), rgba(4, 98, 65, 0.95)); z-index: 1;
+        }
+        #careers-hero .container { position: relative; z-index: 2; }
+        .careers-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 30px; }
+        .careers-intro { font-size: 1.2rem; color: rgba(255, 255, 255, 0.85); max-width: 800px; margin: 0 auto; line-height: 1.7; }
+        #why-join-us { background-color: var(--sea-salt); }
+        .why-join-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .why-join-card { background-color: var(--white); padding: 40px; text-align: center; border: 1px solid var(--border-color); border-radius: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .why-join-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(19, 48, 32, 0.1); }
+        .offer-icon { font-size: 3rem; color: var(--accent-primary); margin-bottom: 20px; }
+        .core-values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; text-align: center; }
+        .core-value-item .value-icon { font-size: 2.5rem; color: var(--accent-secondary); margin-bottom: 15px; display: inline-block; }
+        .core-value-item h4 { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; }
+        .core-value-item p { font-size: 0.95rem; line-height: 1.6; }
+        #openings { background-color: var(--paper); }
+        .job-listing-container { max-width: 900px; margin: 0 auto; }
+        .job-post {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+            background: var(--white); padding: 25px 35px; border-radius: 12px; margin-bottom: 20px;
+            border: 1px solid var(--border-color); box-shadow: 0 5px 15px rgba(19, 48, 32, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .job-post:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(19, 48, 32, 0.1); }
+        .job-details h4 { font-size: 1.4rem; margin: 0 0 8px 0; }
+        .job-details span { color: #777; font-size: 0.95rem; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .job-details span i { color: var(--accent-primary); margin-right: -8px; }
+        .loading-placeholder, .no-jobs-placeholder {
+            text-align: center; padding: 60px 20px; color: #777; font-size: 1.1rem;
+            max-width: 900px; margin: 20px auto; background-color: #fff;
+            border: 1px dashed var(--border-color); border-radius: 12px;
+        }
+        .loading-placeholder i, .no-jobs-placeholder i { font-size: 2.5rem; display: block; margin-bottom: 20px; color: var(--accent-primary); }
+        .no-jobs-placeholder p:last-of-type { font-size: 0.95rem; margin-top: 10px; color: #999; }
+        .openings-cta {
+            text-align: center; max-width: 900px; margin: 80px auto 0;
+            padding-top: 60px; border-top: 1px solid rgba(19, 48, 32, 0.15);
+        }
+        .openings-cta h2 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 20px; }
+        .openings-cta p { color: #555; max-width: 600px; margin: 0 auto 30px auto; }
+
+
+        /* --- FOOTER --- */
+        .footer { background-color: var(--bg-dark); color: var(--text-light); padding: 80px 5% 0; }
+        .footer-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 50px; padding-bottom: 50px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .footer-widget h4 { font-size: 1.3rem; font-weight: 600; color: var(--text-light); margin-bottom: 25px; position: relative; padding-bottom: 10px; }
+        .footer-widget h4::after { content: ''; position: absolute; left: 0; bottom: 0; width: 40px; height: 2px; background-color: var(--accent-primary); }
+        .footer-about .nav-logo { margin-bottom: 15px; color: var(--text-light); }
+        .footer-tagline, .footer-newsletter p { font-size: 1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7); margin-bottom: 25px; }
+        .footer-social-icons { display: flex; gap: 15px; }
+        .footer-social-icons a { display: inline-flex; width: 40px; height: 40px; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; color: var(--text-light); font-size: 0.9rem; transition: all 0.3s ease; }
+        .footer-social-icons a:hover { background-color: var(--accent-secondary); color: var(--text-dark); border-color: var(--accent-secondary); transform: translateY(-3px); }
+        .footer-links ul { list-style: none; }
+        .footer-links ul li { margin-bottom: 12px; }
+        .footer-links ul li a { color: rgba(255,255,255,0.7); transition: color 0.3s ease, padding-left 0.3s ease; }
+        .footer-links ul li a:hover { color: var(--white); padding-left: 10px; }
+        .footer-newsletter-form { display: flex; margin-top: 15px; border-radius: 8px; overflow: hidden; }
+        .footer-newsletter-form input { width: 100%; padding: 12px 15px; border: 1px solid rgba(255, 255, 255, 0.2); background: transparent; color: var(--text-light); font-family: var(--font-body); }
+        .footer-newsletter-form button { border: none; background-color: var(--accent-secondary); color: var(--text-dark); padding: 0 18px; cursor: pointer; font-size: 1.1rem; transition: background-color 0.3s ease; }
+        .footer-bottom-bar { display: flex; justify-content: space-between; align-items: center; padding: 25px 0; flex-wrap: wrap; gap: 15px; }
+        .copyright { font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); }
+        .footer .footer-final-tagline { font-style: italic; color: var(--earth-yellow); font-size: 1rem; }
+
+
+        /* --- ANIMATIONS & KEYFRAMES --- */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+            section { padding: 80px 5%; }
+            .header { background: var(--white); box-shadow: 0 2px 10px rgba(19, 48, 32, 0.08); }
+            .navbar { height: 70px; }
+            .nav-menu {
+                position: fixed; top: 0; left: -100%; width: 100%; height: 100vh; background-color: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); flex-direction: column; justify-content: center;
+                gap: 20px; text-align: center; transition: left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+            .nav-menu.active { left: 0; }
+            .nav-link { display: block; padding: 15px; font-size: 1.5rem; }
+            .nav-toggle { display: block; color: var(--text-dark); text-shadow: none; }
+            .nav-toggle.active i::before { content: '\f00d'; }
+            
+            .careers-title { font-size: 2.8rem; }
+            .job-post { flex-direction: column; align-items: flex-start; padding: 25px; }
+            .job-post .btn-outline { width: 100%; text-align: center; margin-top: 15px; }
+            .openings-cta h2 { font-size: 2rem; }
+            .footer-bottom-bar { justify-content: center; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- ENHANCED Header & Navigation -->
+    <!-- Header & Navigation -->
     <header class="header">
         <nav class="navbar">
-            <a href="index.html#home" class="nav-logo">
-                <span class="logo-icon"></span>lifewood
-            </a>
+            <a href="index.html#home" class="nav-logo"><span class="logo-icon"></span>lifewood</a>
             <ul class="nav-menu">
                 <li><a href="index.html#home" class="nav-link" data-en="Home" data-zh="首页">Home</a></li>
                 <li><a href="index.html#solutions" class="nav-link" data-en="Services" data-zh="服务">Services</a></li>
@@ -34,7 +245,6 @@
                 <li><a href="project.html" class="nav-link" data-en="Project" data-zh="项目">Project</a></li>
                 <li><a href="career.html" class="nav-link active-page" data-en="Career" data-zh="招聘">Career</a></li>
                 <li><a href="index.html#contact" class="nav-link-btn btn" data-en="Contact Us" data-zh="联系我们">Contact Us</a></li>
-                <!-- Language Switcher Added -->
                 <li>
                     <div class="language-switcher">
                         <button class="lang-btn" data-lang="en">EN</button>
@@ -43,9 +253,7 @@
                     </div>
                 </li>
             </ul>
-            <div class="nav-toggle" id="nav-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
+            <div class="nav-toggle" id="nav-toggle"><i class="fas fa-bars"></i></div>
         </nav>
     </header>
 
@@ -69,21 +277,9 @@
                 <p class="section-subtitle" data-en="We are more than a company; we are a collective of innovators and problem-solvers dedicated to pushing the boundaries of technology." data-zh="我们不仅仅是一家公司；我们是一个由创新者和问题解决者组成的集体，致力于推动技术边界。">We are more than a company; we are a collective of innovators and problem-solvers dedicated to pushing the boundaries of technology.</p>
                 
                 <div class="why-join-grid">
-                    <div class="why-join-card">
-                        <div class="offer-icon"><i class="fas fa-lightbulb"></i></div>
-                        <h3 data-en="Drive Innovation" data-zh="驱动创新">Drive Innovation</h3>
-                        <p data-en="Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact." data-zh="在重新定义行业并创造实际影响的项目中，与尖端的AI和数据技术合作。">Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact.</p>
-                    </div>
-                    <div class="why-join-card">
-                        <div class="offer-icon"><i class="fas fa-arrow-trend-up"></i></div>
-                        <h3 data-en="Accelerate Your Growth" data-zh="加速你的成长">Accelerate Your Growth</h3>
-                        <p data-en="We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement." data-zh="我们通过持续的学习机会、导师指导和清晰的职业发展路径来投资于您的发展。">We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement.</p>
-                    </div>
-                    <div class="why-join-card">
-                        <div class="offer-icon"><i class="fas fa-globe"></i></div>
-                        <h3 data-en="Collaborate Globally" data-zh="全球协作">Collaborate Globally</h3>
-                        <p data-en="Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things." data-zh="加入一个多元化的跨国团队，在这里，独特的视角汇聚一堂，解决复杂的挑战，共创非凡。">Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things.</p>
-                    </div>
+                    <div class="why-join-card"><div class="offer-icon"><i class="fas fa-lightbulb"></i></div><h3 data-en="Drive Innovation" data-zh="驱动创新">Drive Innovation</h3><p data-en="Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact." data-zh="在重新定义行业并创造实际影响的项目中，与尖端的AI和数据技术合作。">Work with cutting-edge AI and data technologies on projects that redefine industries and create tangible impact.</p></div>
+                    <div class="why-join-card"><div class="offer-icon"><i class="fas fa-arrow-trend-up"></i></div><h3 data-en="Accelerate Your Growth" data-zh="加速你的成长">Accelerate Your Growth</h3><p data-en="We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement." data-zh="我们通过持续的学习机会、导师指导和清晰的职业发展路径来投资于您的发展。">We invest in your development with continuous learning opportunities, mentorship, and a clear path for career advancement.</p></div>
+                    <div class="why-join-card"><div class="offer-icon"><i class="fas fa-globe"></i></div><h3 data-en="Collaborate Globally" data-zh="全球协作">Collaborate Globally</h3><p data-en="Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things." data-zh="加入一个多元化的跨国团队，在这里，独特的视角汇聚一堂，解决复杂的挑战，共创非凡。">Join a diverse, cross-border team where unique perspectives converge to solve complex challenges and build amazing things.</p></div>
                 </div>
             </div>
         </section>
@@ -94,92 +290,42 @@
                 <h2 class="section-title" data-en="The DNA of Our Team" data-zh="我们团队的DNA">The DNA of Our Team</h2>
                 <p class="section-subtitle" data-en="These are the values that guide our decisions, our collaborations, and our commitment to excellence." data-zh="这些是指导我们决策、合作和追求卓越承诺的价值观。">These are the values that guide our decisions, our collaborations, and our commitment to excellence.</p>
                 <div class="core-values-grid">
-                    <div class="core-value-item">
-                        <span class="value-icon"><i class="fas fa-rocket"></i></span>
-                        <h4 data-en="Innovation" data-zh="创新">Innovation</h4>
-                        <p data-en="We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions." data-zh="我们被好奇心和对寻找更好、更智能、更有效解决方案的不懈渴望所驱动。">We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions.</p>
-                    </div>
-                    <div class="core-value-item">
-                        <span class="value-icon"><i class="fas fa-person-running"></i></span>
-                        <h4 data-en="Agility" data-zh="敏捷">Agility</h4>
-                        <p data-en="We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets." data-zh="我们迅速适应，拥抱变化，并在快节奏的环境中茁壮成长，以实现宏伟目标。">We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets.</p>
-                    </div>
-                    <div class="core-value-item">
-                        <span class="value-icon"><i class="fas fa-users-gear"></i></span>
-                        <h4 data-en="Collaboration" data-zh="协作">Collaboration</h4>
-                        <p data-en="We believe the best ideas are born from teamwork, open communication, and mutual respect." data-zh="我们相信最好的想法源于团队合作、开放沟通和相互尊重。">We believe the best ideas are born from teamwork, open communication, and mutual respect.</p>
-                    </div>
-                    <div class="core-value-item">
-                        <span class="value-icon"><i class="fas fa-earth-americas"></i></span>
-                        <h4 data-en="Global Impact" data-zh="全球影响">Global Impact</h4>
-                        <p data-en="We aim to create technology that not only serves clients but also contributes positively to the global community." data-zh="我们旨在创造不仅服务于客户，还能为全球社区做出积极贡献的技术。">We aim to create technology that not only serves clients but also contributes positively to the global community.</p>
-                    </div>
+                    <div class="core-value-item"><span class="value-icon"><i class="fas fa-rocket"></i></span><h4 data-en="Innovation" data-zh="创新">Innovation</h4><p data-en="We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions." data-zh="我们被好奇心和对寻找更好、更智能、更有效解决方案的不懈渴望所驱动。">We are driven by curiosity and a relentless desire to find better, smarter, and more effective solutions.</p></div>
+                    <div class="core-value-item"><span class="value-icon"><i class="fas fa-person-running"></i></span><h4 data-en="Agility" data-zh="敏捷">Agility</h4><p data-en="We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets." data-zh="我们迅速适应，拥抱变化，并在快节奏的环境中茁壮成长，以实现宏伟目标。">We adapt quickly, embrace change, and thrive in a fast-paced environment to meet ambitious targets.</p></div>
+                    <div class="core-value-item"><span class="value-icon"><i class="fas fa-users-gear"></i></span><h4 data-en="Collaboration" data-zh="协作">Collaboration</h4><p data-en="We believe the best ideas are born from teamwork, open communication, and mutual respect." data-zh="我们相信最好的想法源于团队合作、开放沟通和相互尊重。">We believe the best ideas are born from teamwork, open communication, and mutual respect.</p></div>
+                    <div class="core-value-item"><span class="value-icon"><i class="fas fa-earth-americas"></i></span><h4 data-en="Global Impact" data-zh="全球影响">Global Impact</h4><p data-en="We aim to create technology that not only serves clients but also contributes positively to the global community." data-zh="我们旨在创造不仅服务于客户，还能为全球社区做出积极贡献的技术。">We aim to create technology that not only serves clients but also contributes positively to the global community.</p></div>
                 </div>
             </div>
         </section>
 
-        <!-- 4. OPENINGS & CTA SECTION (COMBINED) -->
+        <!-- 4. OPENINGS & CTA SECTION (DYNAMIC) -->
         <section id="openings" class="fade-in">
             <div class="container">
                 <h2 class="section-title" data-en="Current Openings" data-zh="当前职位空缺">Current Openings</h2>
                 <p class="section-subtitle" data-en="Find your next challenge. Explore our open roles and discover where you fit in our global team." data-zh="寻找你的下一个挑战。探索我们的空缺职位，发现你在我们全球团队中的位置。">Find your next challenge. Explore our open roles and discover where you fit in our global team.</p>
                 
-                <div class="job-listing-container">
-                    <!-- Job Post 1 -->
-                    <div class="job-post">
-                        <div class="job-details">
-                            <h4 data-en="Senior AI Engineer" data-zh="高级AI工程师">Senior AI Engineer</h4>
-                            <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> <span data-en="Full-time" data-zh="全职">Full-time</span></span>
-                        </div>
-                        <a href="fillupform.html" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
-                    </div>
-                    <!-- Job Post 2 -->
-                    <div class="job-post">
-                        <div class="job-details">
-                            <h4 data-en="UX/UI Designer" data-zh="用户体验/界面设计师">UX/UI Designer</h4>
-                            <span><i class="fas fa-map-marker-alt"></i> Remote | <i class="fas fa-briefcase"></i> <span data-en="Full-time" data-zh="全职">Full-time</span></span>
-                        </div>
-                        <a href="fillupform.html" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
-                    </div>
-                    <!-- Job Post 3 -->
-                    <div class="job-post">
-                        <div class="job-details">
-                            <h4 data-en="Data Annotation Specialist" data-zh="数据标注专员">Data Annotation Specialist</h4>
-                             <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> <span data-en="Project-based" data-zh="项目制">Project-based</span></span>
-                        </div>
-                        <a href="fillupform.html" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
-                    </div>
-                     <!-- Job Post 4 -->
-                     <div class="job-post">
-                        <div class="job-details">
-                            <h4 data-en="Project Manager" data-zh="项目经理">Project Manager</h4>
-                            <span><i class="fas fa-map-marker-alt"></i> Cebu, Philippines | <i class="fas fa-briefcase"></i> <span data-en="Full-time" data-zh="全职">Full-time</span></span>
-                        </div>
-                        <a href="fillupform.html" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
+                <div class="job-listing-container" id="job-listing-container">
+                    <div class="loading-placeholder">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p data-en="Loading open positions..." data-zh="正在加载职位空缺...">Loading open positions...</p>
                     </div>
                 </div>
 
-                <!-- NEW CTA block within the same section -->
                 <div class="openings-cta">
                     <h2 data-en="Don't see the right role for you?" data-zh="没有找到适合你的职位？">Don't see the right role for you?</h2>
                     <p data-en="We are always looking for passionate and talented individuals to join our mission. If you believe you have what it takes, we'd love to hear from you." data-zh="我们一直在寻找充满激情和才华的人才加入我们的使命。如果你相信自己具备所需的能力，我们很乐意听到你的消息。">We are always looking for passionate and talented individuals to join our mission. If you believe you have what it takes, we'd love to hear from you.</p>
                     <a href="mailto:info.ph@lifewood.com" class="btn btn-accent" data-en="Submit Your CV" data-zh="提交您的简历">Submit Your CV</a>
                 </div>
-
             </div>
         </section>
-
     </main>
 
-    <!-- REUSED Footer -->
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-main">
-                <!-- About Widget -->
                 <div class="footer-widget footer-about">
-                    <a href="index.html#home" class="nav-logo">
-                        <span class="logo-icon"></span>lifewood
-                    </a>
+                    <a href="index.html#home" class="nav-logo"><span class="logo-icon"></span>lifewood</a>
                     <p class="footer-tagline" data-en="Always switch on never off" data-zh="永不关机，时刻在线">Always switch on never off</p>
                     <div class="footer-social-icons">
                         <a href="https://www.facebook.com/LifewoodPH" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -187,8 +333,6 @@
                         <a href="https://www.linkedin.com/company/lifewood" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-    
-                <!-- Quick Links Widget -->
                 <div class="footer-widget footer-links">
                     <h4 data-en="Quick Links" data-zh="快速链接">Quick Links</h4>
                     <ul>
@@ -198,8 +342,6 @@
                         <li><a href="index.html#contact" data-en="Contact" data-zh="联系">Contact</a></li>
                     </ul>
                 </div>
-    
-                <!-- Newsletter Widget -->
                 <div class="footer-widget footer-newsletter">
                     <h4 data-en="Join Our Newsletter" data-zh="加入我们的简报">Join Our Newsletter</h4>
                     <p data-en="Get the latest insights on AI, and design delivered to your inbox." data-zh="获取关于AI和设计的最新见解，发送至您的收件箱。">Get the latest insights on AI, and design delivered to your inbox.</p>
@@ -209,7 +351,6 @@
                     </form>
                 </div>
             </div>
-    
             <div class="footer-bottom-bar">
                 <p class="copyright" data-en="© 2025 Lifewood. All Rights Reserved." data-zh="© 2025 Lifewood. 版权所有。">© 2025 Lifewood. All Rights Reserved.</p>
                 <p class="footer-final-tagline" data-en="Be Amaze." data-zh="感受惊喜。">Be Amaze.</p>
@@ -217,62 +358,117 @@
         </div>
     </footer>
 
-    <!-- SCRIPT BLOCK - For Nav & Animations -->
-    <script>
-        const navToggle = document.getElementById('nav-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        const header = document.querySelector('.header');
+    <!-- Firebase Config - MUST be before the module script -->
+    <script src="js/firebase-config.js"></script>
 
-        navToggle.addEventListener('click', (e) => { e.stopPropagation(); navMenu.classList.toggle('active'); navToggle.classList.toggle('active'); });
-        document.querySelectorAll('.nav-menu a:not(.lang-btn)').forEach(link => { link.addEventListener('click', () => { if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } }); });
-        document.addEventListener('click', (e) => { if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !navToggle.contains(e.target)) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } });
-        window.addEventListener('scroll', () => { window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled'); });
+    <!-- Main Script Block -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const faders = document.querySelectorAll('.fade-in');
-        const appearOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
-        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScrollObserver) {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) { return; } 
-                else { entry.target.classList.add('visible'); appearOnScrollObserver.unobserve(entry.target); }
-            });
-        }, appearOptions);
-        faders.forEach(fader => { appearOnScroll.observe(fader); });
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const jobContainer = document.getElementById('job-listing-container');
+
+        // Function to display job listings from Firestore
+        async function displayJobListings() {
+            try {
+                const q = query(collection(db, "job-listings"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                jobContainer.innerHTML = ''; // Clear the loading placeholder
+
+                if (querySnapshot.empty) {
+                    jobContainer.innerHTML = `
+                        <div class="no-jobs-placeholder">
+                            <i class="fas fa-folder-open"></i>
+                            <p data-en="There are no open positions at the moment." data-zh="目前没有职位空缺。">There are no open positions at the moment.</p>
+                            <p data-en="Please check back later or submit your CV below." data-zh="请稍后回来查看，或在下方提交您的简历。">Please check back later or submit your CV below.</p>
+                        </div>
+                    `;
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const job = doc.data();
+                        const encodedTitle = encodeURIComponent(job.title);
+                        const jobPostDiv = document.createElement('div');
+                        jobPostDiv.className = 'job-post';
+                        jobPostDiv.innerHTML = `
+                            <div class="job-details">
+                                <h4>${job.title}</h4>
+                                <span>
+                                    <i class="fas fa-map-marker-alt"></i> ${job.location} | 
+                                    <i class="fas fa-briefcase"></i> <span data-en="${job.type}" data-zh="${job.type}">${job.type}</span>
+                                </span>
+                            </div>
+                            <a href="fillupform.html?position=${encodedTitle}" class="btn btn-outline" data-en="Apply Now" data-zh="立即申请">Apply Now</a>
+                        `;
+                        jobContainer.appendChild(jobPostDiv);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching job listings: ", error);
+                jobContainer.innerHTML = `
+                    <div class="no-jobs-placeholder">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p data-en="Could not load job openings." data-zh="无法加载职位空缺。">Could not load job openings.</p>
+                        <p data-en="Please try refreshing the page." data-zh="请尝试刷新页面。">Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+
+            // Re-run the language switcher logic to translate newly added dynamic content
+            if (window.setLanguage) {
+                window.setLanguage(localStorage.getItem('lifewoodLang') || 'en');
+            }
+        }
+
+        // Run the function on page load
+        displayJobListings();
     </script>
-    <!-- SCRIPT BLOCK - For Language Switching -->
+    
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const langButtons = document.querySelectorAll('.lang-btn');
-
-        const setLanguage = (lang) => {
-            document.documentElement.lang = lang;
-            const elementsToTranslate = document.querySelectorAll('[data-en], [data-en-placeholder]');
+        // Nav, Animation & Language Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            const header = document.querySelector('.header');
             
-            elementsToTranslate.forEach(el => {
-                if (el.dataset.en) {
-                    el.innerHTML = el.dataset[lang] || el.dataset['en'];
-                }
-                if (el.dataset.enPlaceholder) {
-                    el.placeholder = el.dataset[`${lang}Placeholder`] || el.dataset['enPlaceholder'];
-                }
-            });
+            navToggle.addEventListener('click', (e) => { e.stopPropagation(); navMenu.classList.toggle('active'); navToggle.classList.toggle('active'); });
+            document.querySelectorAll('.nav-menu a:not(.lang-btn)').forEach(link => { link.addEventListener('click', () => { if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } }); });
+            document.addEventListener('click', (e) => { if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !navToggle.contains(e.target)) { navMenu.classList.remove('active'); navToggle.classList.remove('active'); } });
+            window.addEventListener('scroll', () => { window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled'); });
 
-            langButtons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-            
-            localStorage.setItem('lifewoodLang', lang);
-        };
+            const faders = document.querySelectorAll('.fade-in');
+            const appearOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScrollObserver) {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); appearOnScrollObserver.unobserve(entry.target); } });
+            }, appearOptions);
+            faders.forEach(fader => { appearOnScroll.observe(fader); });
 
-        const savedLang = localStorage.getItem('lifewoodLang') || 'en';
-        setLanguage(savedLang);
+            const langButtons = document.querySelectorAll('.lang-btn');
+            window.setLanguage = (lang) => {
+                document.documentElement.lang = lang;
+                const elementsToTranslate = document.querySelectorAll('[data-en], [data-en-placeholder]');
+                elementsToTranslate.forEach(el => {
+                    const translationKey = lang === 'zh' ? 'data-zh' : 'data-en';
+                    const fallbackKey = 'data-en';
+                    const placeholderKey = lang === 'zh' ? 'data-zh-placeholder' : 'data-en-placeholder';
+                    const placeholderFallbackKey = 'data-en-placeholder';
 
-        langButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault(); // Prevent page jump if it's an anchor tag
-                setLanguage(button.dataset.lang);
-            });
+                    if (el.hasAttribute(fallbackKey)) {
+                         el.innerHTML = el.getAttribute(translationKey) || el.getAttribute(fallbackKey);
+                    }
+                    if (el.hasAttribute(placeholderFallbackKey)) {
+                        el.placeholder = el.getAttribute(placeholderKey) || el.getAttribute(placeholderFallbackKey);
+                    }
+                });
+                langButtons.forEach(btn => { btn.classList.toggle('active', btn.dataset.lang === lang); });
+                localStorage.setItem('lifewoodLang', lang);
+            };
+            const savedLang = localStorage.getItem('lifewoodLang') || 'en';
+            window.setLanguage(savedLang);
+            langButtons.forEach(button => { button.addEventListener('click', (e) => { e.preventDefault(); window.setLanguage(button.dataset.lang); }); });
         });
-    });
     </script>
 </body>
 </html>
