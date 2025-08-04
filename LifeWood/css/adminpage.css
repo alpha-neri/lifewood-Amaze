@@ -232,6 +232,92 @@ tbody tr { opacity: 0; }
 .btn-save-job:hover { opacity: 0.9; }
 .btn-save-job:disabled { background-color: #ccc; cursor: not-allowed; }
 
+/* --- NEW: Contact Messages View --- */
+.messages-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* One column layout for messages */
+    gap: 20px;
+}
+
+.message-card {
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--accent-primary);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+    opacity: 0; /* For animation */
+}
+
+.message-card.visible {
+    animation: fadeInRow 0.5s ease-out forwards;
+}
+
+.message-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.message-sender {
+    display: flex;
+    flex-direction: column;
+}
+
+.sender-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.sender-email {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.message-date {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.message-body {
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+.message-body p {
+    margin: 0;
+    white-space: pre-wrap; /* To respect line breaks */
+}
+
+.message-actions {
+    padding: 10px 20px;
+    text-align: right;
+    background-color: var(--sea-salt);
+    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 7px 7px;
+}
+
+.btn-action.delete-message {
+    background-color: #e74c3c;
+}
+
 /* --- Responsive Styles --- */
 @media (max-width: 992px) { 
     .admin-sidebar { transform: translateX(-100%); } 
