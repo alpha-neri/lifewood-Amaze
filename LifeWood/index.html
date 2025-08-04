@@ -14,9 +14,15 @@
     
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <!-- External CSS Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Firebase Config -->
+    <script src="js/firebase-config.js"></script>
 </head>
 <body>
 
@@ -380,11 +386,18 @@
                 <div class="contact-box fade-in">
                     <div class="contact-wrapper">
                         <div class="contact-form">
-                            <form action="#">
-                                 <div class="form-group"><input type="text" name="name" required data-en-placeholder="Your Name" data-zh-placeholder="您的姓名" placeholder="Your Name"></div>
-                                <div class="form-group"><input type="email" name="email" required data-en-placeholder="Your Email" data-zh-placeholder="您的邮箱" placeholder="Your Email"></div>
-                                <div class="form-group"><textarea name="message" required data-en-placeholder="Your Message" data-zh-placeholder="您的留言" placeholder="Your Message"></textarea></div>
-                                <button type="submit" class="btn" data-en="Send Message" data-zh="发送消息">Send Message</button>
+                            <!-- UPDATED FORM -->
+                            <form id="contact-form">
+                                <div class="form-group">
+                                    <input type="text" id="contact-name" name="name" required data-en-placeholder="Your Name" data-zh-placeholder="您的姓名" placeholder="Your Name">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" id="contact-email" name="email" required data-en-placeholder="Your Email" data-zh-placeholder="您的邮箱" placeholder="Your Email">
+                                </div>
+                                <div class="form-group">
+                                    <textarea id="contact-message" name="message" required data-en-placeholder="Your Message" data-zh-placeholder="您的留言" placeholder="Your Message"></textarea>
+                                </div>
+                                <button type="submit" class="btn" id="contact-submit-btn" data-en="Send Message" data-zh="发送消息">Send Message</button>
                             </form>
                         </div>
                         <div class="contact-info">
@@ -392,9 +405,9 @@
                                  <li><i class="fas fa-map-marker-alt"></i> I2 Building Ground Floor Jose Del Mar St. Asiatown, Salinas Drive, Cebu City, Philippines</li>
                                  <li><i class="fas fa-phone"></i> 0927 615 5464</li>
                                 <li><i class="fas fa-envelope"></i> info.ph@lifewood.com</li>
-                                </ul>
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.267319910543!2d123.90487737591874!3d10.32049616616428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a9992015555555%3A0xb15b63005553e839!2si2%20Building!5e0!3m2!1sen!2sph!4v1715832791535!5m2!1sen!2sph" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            </div>
+                            </ul>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3925.267319910543!2d123.90487737591874!3d10.32049616616428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a9992015555555%3A0xb15b63005553e839!2si2%20Building!5e0!3m2!1sen!2sph!4v1715832791535!5m2!1sen!2sph" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -457,6 +470,72 @@
     </footer>
     
     <!-- SCRIPT BLOCK (UPDATED) -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- CONTACT FORM SUBMISSION ---
+        const contactForm = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('contact-submit-btn');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+
+            if (!name || !email || !message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill out all fields.',
+                });
+                return;
+            }
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
+
+            try {
+                await addDoc(collection(db, "contact-messages"), {
+                    name: name,
+                    email: email,
+                    message: message,
+                    submittedAt: serverTimestamp()
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Message Sent!',
+                    text: 'Thank you for contacting us. We will get back to you shortly.',
+                });
+                contactForm.reset();
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Submission Failed',
+                    text: 'Something went wrong. Please try again later.',
+                });
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                
+                // Reset button text based on current language
+                const currentLang = localStorage.getItem('lifewoodLang') || 'en';
+                const buttonText = submitBtn.dataset[currentLang] || 'Send Message';
+                submitBtn.textContent = buttonText;
+            }
+        });
+    </script>
     <script>
         // Existing Scripts
         const navToggle = document.getElementById('nav-toggle');
@@ -587,34 +666,22 @@
             setLanguage(savedLang);
 
             // --- SECRET ADMIN LOGIN ---
-            // This script adds a hidden way to access the admin page.
-            // Click the logo 5 times quickly to be redirected.
             (function() {
                 const logos = document.querySelectorAll('.nav-logo');
                 const requiredClicks = 5;
-                const redirectURL = 'admin.html'; // Change this to your admin login page if different
+                const redirectURL = 'admin.html'; 
                 let clickCount = 0;
                 let clickTimer;
-
-                const resetCounter = () => {
-                    clickCount = 0;
-                };
-
-                const logoClickHandler = () => {
+                const resetCounter = () => { clickCount = 0; };
+                const logoClickHandler = (e) => {
+                    e.preventDefault(); // Prevent navigation
                     clickCount++;
                     clearTimeout(clickTimer);
-                    clickTimer = setTimeout(resetCounter, 2000); // Reset after 2 seconds of inactivity
-
-                    if (clickCount >= requiredClicks) {
-                        window.location.href = redirectURL;
-                    }
+                    clickTimer = setTimeout(resetCounter, 2000); 
+                    if (clickCount >= requiredClicks) { window.location.href = redirectURL; }
                 };
-                
-                logos.forEach(logo => {
-                    logo.addEventListener('click', logoClickHandler);
-                });
+                logos.forEach(logo => { logo.addEventListener('click', logoClickHandler); });
             })();
-
         });
     </script>
 </body>
