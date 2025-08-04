@@ -26,7 +26,8 @@
                 <ul>
                     <li><a data-view="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
                     <li><a data-view="applications"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
-                    <li><a data-view="listings"><i class="fas fa-list-ul"></i> <span>Job Listings</span></a></li>
+                    <!-- MODIFICATION: Added a badge for job listings -->
+                    <li><a data-view="listings"><i class="fas fa-list-ul"></i> <span>Job Listings</span><span class="badge" id="listing-count-badge">0</span></a></li>
                     <li><a data-view="messages"><i class="fas fa-envelope"></i> <span>Contact Messages</span><span class="badge" id="message-count-badge">0</span></a></li>
                     <li><a class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
                 </ul>
@@ -72,7 +73,7 @@
                     <div class="table-responsive">
                         <table id="dashboard-applications-table">
                             <thead><tr><th>Applicant Name</th><th>Position</th><th>Status</th><th>Actions</th></tr></thead>
-                            <tbody></tbody>
+                            <tbody><!-- Content is dynamically inserted here --></tbody>
                         </table>
                     </div>
                 </section>
@@ -85,7 +86,7 @@
                     <div class="table-responsive">
                         <table id="full-applications-table">
                             <thead><tr><th>Applicant Name</th><th>Position</th><th>Status</th><th>Actions</th></tr></thead>
-                            <tbody></tbody>
+                            <tbody><!-- Content is dynamically inserted here --></tbody>
                         </table>
                     </div>
                 </section>
@@ -349,13 +350,20 @@
             jobListingModalOverlay.addEventListener('click', (e) => {
                 if (e.target === jobListingModalOverlay) closeJobListingModal();
             });
+
+            // --- [JOB LISTINGS] Real-time listener ---
             const listingsQuery = query(collection(db, "job-listings"), orderBy("createdAt", "desc"));
             onSnapshot(listingsQuery, (snapshot) => {
+                // MODIFICATION: Update the job listing badge count
+                document.getElementById('listing-count-badge').textContent = snapshot.size;
+
                 jobListingsGrid.innerHTML = '';
+                
                 if (snapshot.empty) {
                     jobListingsGrid.innerHTML = `<p class="no-data-message" style="grid-column: 1 / -1;"><i class="fas fa-folder-open"></i><span>No job listings created yet. Click 'Add New Job' to start.</span></p>`;
                     return;
                 }
+                
                 snapshot.docs.forEach((docSnap, i) => {
                     const listing = docSnap.data();
                     const card = document.createElement('div');
@@ -440,9 +448,9 @@
                 }
             });
             
-            // =============================================
+            // ================================================
             // === CONTACT MESSAGES FUNCTIONALITY START (NEW) ===
-            // =============================================
+            // ================================================
             const messagesQuery = query(collection(db, "contact-messages"), orderBy("submittedAt", "desc"));
             const messagesGrid = document.getElementById('messages-grid');
             const messageCountBadge = document.getElementById('message-count-badge');
@@ -450,7 +458,7 @@
             onSnapshot(messagesQuery, (snapshot) => {
                 messagesGrid.innerHTML = '';
                 messageCountBadge.textContent = snapshot.size;
-
+                
                 if (snapshot.empty) {
                     messagesGrid.innerHTML = `<p class="no-data-message" style="grid-column: 1 / -1;"><i class="fas fa-envelope-open"></i><span>No contact messages yet.</span></p>`;
                     return;
@@ -518,7 +526,6 @@
             // =============================================
             mainContent.addEventListener('click', async (e) => {
                 const button = e.target.closest('button.btn-action');
-                // Exit if not an action button, or if it's a listing/message button (handled elsewhere)
                 if (!button || !button.dataset.id || button.classList.contains('edit-listing') || button.classList.contains('delete-listing') || button.classList.contains('delete-message') || button.id === 'add-new-job-btn') return;
 
                 const { id, name, email, position } = button.dataset;
@@ -608,7 +615,7 @@
                 }
             });
 
-            // --- onSnapshot for populating application tables ---
+            // --- [JOB APPLICATIONS] Real-time listener for populating tables ---
             onSnapshot(applicationsQuery, (snapshot) => {
                 const dashboardTableBody = document.querySelector('#dashboard-applications-table tbody');
                 const fullTableBody = document.querySelector('#full-applications-table tbody');
@@ -619,7 +626,7 @@
                 const positions = new Set();
                 
                 if (snapshot.empty) {
-                    const noDataRow = `<tr><td colspan="4" class="no-data-message"><i class="fas fa-folder-open"></i><span>No applications submitted yet.</span></td></tr>`;
+                    const noDataRow = `<tr class="row-visible"><td colspan="4" class="no-data-message"><i class="fas fa-folder-open"></i><span>No applications submitted yet.</span></td></tr>`;
                     dashboardTableBody.innerHTML = noDataRow;
                     fullTableBody.innerHTML = noDataRow;
                 } else {
