@@ -14,6 +14,7 @@
 
     <!-- SweetAlert2 for modern alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Firebase Config -->
     <script src="js/firebase-config.js"></script>
     <style>
         .swal2-popup { font-family: 'Manrope', sans-serif; }
@@ -30,7 +31,7 @@
         <div class="apply-container">
             <div class="form-header">
                 <h1>Job Application</h1>
-                <p>Please fill out the form below to apply for a position at Lifewood.</p>
+                <p>Please fill out the form below to apply for an open position at Lifewood.</p>
             </div>
 
             <form id="lifewood-application-form">
@@ -66,23 +67,19 @@
                     <h2>Application Details</h2>
                     <div class="form-group">
                         <label for="project-applied-for">Position Applied For</label>
+                        <!-- === MODIFIED: This dropdown is now dynamic === -->
                         <select id="project-applied-for" name="position" required>
-                            <option value="" disabled selected>Select a position</option>
-                            <option value="Senior AI Engineer">Senior AI Engineer</option>
-                            <option value="UX/UI Designer">UX/UI Designer</option>
-                            <option value="Project Manager">Project Manager</option>
-                            <option value="Data Scientist">Data Scientist</option>
-                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="" disabled selected>Loading available positions...</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="job-experience">Relevant Job Experience</label>
-                        <textarea id="job-experience" name="experience" placeholder="Describe your previous roles..."></textarea>
+                        <textarea id="job-experience" name="experience" placeholder="Describe your previous roles, projects, and achievements..."></textarea>
                     </div>
                     <div class="form-group">
                         <label for="resume-link">Resume Link</label>
                         <input type="url" id="resume-link" name="resumeLink" placeholder="https://..." required>
-                        <p class="form-hint">Provide a link to your resume (e.g., Google Drive, LinkedIn Profile).</p>
+                        <p class="form-hint">Provide a public link to your resume (e.g., Google Drive, LinkedIn Profile, Online Portfolio).</p>
                     </div>
                 </div>
 
@@ -111,17 +108,64 @@
         <p>© 2024 Lifewood. All rights reserved.</p>
     </footer>
 
+    <!-- MODIFIED SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+        import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         const applicationForm = document.getElementById('lifewood-application-form');
         const submitBtn = document.getElementById('submit-btn');
+        const positionsSelect = document.getElementById('project-applied-for');
 
+        // --- NEW: Function to dynamically load job positions ---
+        async function populateJobPositions() {
+            try {
+                // Query the 'job-listings' collection, ordering by title alphabetically
+                const q = query(collection(db, "job-listings"), orderBy("title"));
+                const querySnapshot = await getDocs(q);
+
+                // Clear the 'loading...' message
+                positionsSelect.innerHTML = ''; 
+
+                if (querySnapshot.empty) {
+                    // Handle case where no jobs are available
+                    const option = document.createElement('option');
+                    option.textContent = "No open positions at this time";
+                    positionsSelect.appendChild(option);
+                    positionsSelect.disabled = true;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'No Positions Available';
+                } else {
+                    // Add a default, non-selectable first option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = "";
+                    defaultOption.textContent = "Select a position";
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    positionsSelect.appendChild(defaultOption);
+
+                    // Populate the dropdown with jobs from Firestore
+                    querySnapshot.forEach((doc) => {
+                        const job = doc.data();
+                        const option = document.createElement('option');
+                        option.value = job.title;
+                        option.textContent = job.title;
+                        positionsSelect.appendChild(option);
+                    });
+                    positionsSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error("Error fetching job listings: ", error);
+                positionsSelect.innerHTML = '<option>Could not load positions</option>';
+                positionsSelect.disabled = true;
+                submitBtn.disabled = true;
+            }
+        }
+
+        // --- Form submission logic (remains the same) ---
         applicationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
@@ -149,6 +193,9 @@
                     confirmButtonText: 'Great!'
                 }).then(() => {
                     applicationForm.reset();
+                    // After reset, re-add the default "Select a position" option
+                    const defaultOption = positionsSelect.querySelector('option[value=""]');
+                    if(defaultOption) defaultOption.selected = true;
                 });
             } catch (error) {
                 console.error("Error adding document: ", error);
@@ -162,7 +209,7 @@
             }
         });
 
-        // --- NEW: Intersection Observer for scroll animations ---
+        // --- Intersection Observer for scroll animations (remains the same) ---
         const faders = document.querySelectorAll('.form-section');
         const appearOptions = {
             threshold: 0.3,
@@ -179,6 +226,9 @@
         faders.forEach(fader => {
             appearOnScroll.observe(fader);
         });
+        
+        // --- Call the new function to load jobs when the page loads ---
+        populateJobPositions();
 
     </script>
 </body>
