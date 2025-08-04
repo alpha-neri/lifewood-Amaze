@@ -27,7 +27,7 @@
                     <li><a data-view="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
                     <li><a data-view="applications"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
                     <li><a data-view="listings"><i class="fas fa-list-ul"></i> <span>Job Listings</span></a></li>
-                    <li><a class="coming-soon-link"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
+                    <li><a data-view="messages"><i class="fas fa-envelope"></i> <span>Contact Messages</span><span class="badge" id="message-count-badge">0</span></a></li>
                     <li><a class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
                 </ul>
             </nav>
@@ -100,6 +100,18 @@
                     </div>
                     <div class="job-listings-grid" id="job-listings-grid">
                         <!-- Job listing cards will be dynamically inserted here -->
+                    </div>
+                </section>
+            </div>
+            
+            <!-- ==== VIEW 4: CONTACT MESSAGES (NEW) ==== -->
+            <div id="view-messages" class="view-panel">
+                <section class="content-panel">
+                    <div class="panel-header">
+                        <h3>Contact Form Messages</h3>
+                    </div>
+                    <div class="messages-grid" id="messages-grid">
+                        <!-- Contact messages will be dynamically inserted here -->
                     </div>
                 </section>
             </div>
@@ -259,7 +271,6 @@
             // ===============================================
             // === JOB LISTINGS (CRUD) FUNCTIONALITY START ===
             // ===============================================
-            // This section is unchanged and correct
             const jobListingModalOverlay = document.getElementById('job-listing-modal-overlay');
             const jobListingModalCloseBtn = document.getElementById('job-listing-modal-close-btn');
             const addNewJobBtn = document.getElementById('add-new-job-btn');
@@ -386,7 +397,6 @@
             scheduleModalCloseBtn.addEventListener('click', closeScheduleModal);
             scheduleModalOverlay.addEventListener('click', (e) => { if (e.target === scheduleModalOverlay) closeScheduleModal(); });
             
-            // --- UPDATED SCHEDULE FORM LOGIC ---
             scheduleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const confirmScheduleBtn = document.getElementById('confirm-schedule-btn');
@@ -417,7 +427,7 @@
                 confirmScheduleBtn.disabled = true;
                 confirmScheduleBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
                 try {
-                    await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams); // <-- UNIVERSAL TEMPLATE
+                    await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
                     await updateDoc(doc(db, "job-applications", docId), { status: 'scheduled', interviewDate, interviewTime, interviewMethod });
                     showToast('success', 'Interview scheduled and invite sent!');
                     closeScheduleModal();
@@ -429,11 +439,87 @@
                     confirmScheduleBtn.textContent = 'Confirm & Send Invite';
                 }
             });
+            
+            // =============================================
+            // === CONTACT MESSAGES FUNCTIONALITY START (NEW) ===
+            // =============================================
+            const messagesQuery = query(collection(db, "contact-messages"), orderBy("submittedAt", "desc"));
+            const messagesGrid = document.getElementById('messages-grid');
+            const messageCountBadge = document.getElementById('message-count-badge');
 
-            // --- UPDATED MAIN EVENT LISTENER ---
+            onSnapshot(messagesQuery, (snapshot) => {
+                messagesGrid.innerHTML = '';
+                messageCountBadge.textContent = snapshot.size;
+
+                if (snapshot.empty) {
+                    messagesGrid.innerHTML = `<p class="no-data-message" style="grid-column: 1 / -1;"><i class="fas fa-envelope-open"></i><span>No contact messages yet.</span></p>`;
+                    return;
+                }
+
+                snapshot.docs.forEach((docSnap, i) => {
+                    const msg = docSnap.data();
+                    const submissionDate = msg.submittedAt?.toDate().toLocaleString() || 'N/A';
+                    
+                    const card = document.createElement('div');
+                    card.className = 'message-card';
+                    card.style.animationDelay = `${i * 50}ms`;
+
+                    card.innerHTML = `
+                        <div class="message-header">
+                            <div class="message-sender">
+                                <span class="sender-name">${msg.name}</span>
+                                <span class="sender-email">${msg.email}</span>
+                            </div>
+                            <div class="message-date">
+                                <i class="fas fa-clock"></i> ${submissionDate}
+                            </div>
+                        </div>
+                        <div class="message-body">
+                            <p>${msg.message}</p>
+                        </div>
+                        <div class="message-actions">
+                            <button class="btn-action delete-message" data-id="${docSnap.id}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    `;
+                    messagesGrid.appendChild(card);
+                    setTimeout(() => card.classList.add('visible'), 50);
+                });
+            });
+
+            messagesGrid.addEventListener('click', (e) => {
+                const deleteBtn = e.target.closest('.delete-message');
+                if (deleteBtn) {
+                    const docId = deleteBtn.dataset.id;
+                    Swal.fire({
+                        title: 'Delete this message?',
+                        text: "This action is irreversible.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#e74c3c',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                await deleteDoc(doc(db, "contact-messages", docId));
+                                showToast('success', 'Message deleted.');
+                            } catch (error) {
+                                showToast('error', 'Could not delete message.');
+                            }
+                        }
+                    });
+                }
+            });
+
+
+            // =============================================
+            // === MAIN EVENT LISTENER FOR ACTIONS =========
+            // =============================================
             mainContent.addEventListener('click', async (e) => {
                 const button = e.target.closest('button.btn-action');
-                if (!button || !button.dataset.id || button.classList.contains('edit-listing') || button.classList.contains('delete-listing') || button.id === 'add-new-job-btn') return;
+                // Exit if not an action button, or if it's a listing/message button (handled elsewhere)
+                if (!button || !button.dataset.id || button.classList.contains('edit-listing') || button.classList.contains('delete-listing') || button.classList.contains('delete-message') || button.id === 'add-new-job-btn') return;
 
                 const { id, name, email, position } = button.dataset;
 
@@ -442,7 +528,6 @@
                     Object.assign(scheduleForm.dataset, { docId: id, name, email, position });
                     openScheduleModal();
                 } else if (button.classList.contains('view-details')) {
-                    // This is unchanged and correct
                     const docSnap = await getDoc(doc(db, "job-applications", id));
                     if (docSnap.exists()) {
                         const data = docSnap.data();
@@ -491,7 +576,7 @@
                             };
 
                             try {
-                                await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams); // <-- UNIVERSAL TEMPLATE
+                                await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
                                 
                                 await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
                                 showToast('success', 'Offer email sent & status updated!');
@@ -507,8 +592,7 @@
                     Swal.fire({ title: 'Reject Application?', text: "This will send a polite rejection email.", icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, Reject' }).then(async (result) => {
                         if (result.isConfirmed) {
                             try {
-                                // This uses the dedicated rejection template, which now also has the correct design.
-                                await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', { name, email, position }); // <-- REJECTION TEMPLATE
+                                await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', { name, email, position });
                                 await updateDoc(doc(db, "job-applications", id), { status: 'rejected' });
                                 showToast('success', 'Rejection email sent!');
                             } catch (error) { showToast('error', 'Could not send email.'); }
@@ -524,7 +608,7 @@
                 }
             });
 
-            // --- onSnapshot for populating tables (unchanged and correct) ---
+            // --- onSnapshot for populating application tables ---
             onSnapshot(applicationsQuery, (snapshot) => {
                 const dashboardTableBody = document.querySelector('#dashboard-applications-table tbody');
                 const fullTableBody = document.querySelector('#full-applications-table tbody');
