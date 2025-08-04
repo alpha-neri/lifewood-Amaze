@@ -17,7 +17,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Load Firebase Config Separately -->
     <script src="js/firebase-config.js"></script>
-
 </head>
 <body>
     <div class="admin-wrapper">
@@ -27,7 +26,7 @@
                 <ul>
                     <li><a data-view="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
                     <li><a data-view="applications"><i class="fas fa-briefcase"></i> <span>Job Applications</span><span class="badge" id="application-count-badge">0</span></a></li>
-                    <li><a class="coming-soon-link"><i class="fas fa-newspaper"></i> <span>News & Posts</span></a></li>
+                    <li><a data-view="listings"><i class="fas fa-list-ul"></i> <span>Job Listings</span></a></li>
                     <li><a class="coming-soon-link"><i class="fas fa-envelope"></i> <span>Contact Messages</span></a></li>
                     <li><a class="coming-soon-link"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
                 </ul>
@@ -91,6 +90,19 @@
                     </div>
                 </section>
             </div>
+
+            <!-- ==== VIEW 3: JOB LISTINGS ==== -->
+            <div id="view-listings" class="view-panel">
+                <section class="content-panel">
+                    <div class="panel-header">
+                        <h3>Manage Job Listings</h3>
+                        <button class="btn-action" id="add-new-job-btn" style="background-color: var(--accent-primary);"><i class="fas fa-plus"></i> Add New Job</button>
+                    </div>
+                    <div class="job-listings-grid" id="job-listings-grid">
+                        <!-- Job listing cards will be dynamically inserted here -->
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
@@ -144,71 +156,81 @@
         </div>
     </div>
 
-  <script type="module">
+    <!-- JOB LISTING MODAL (FOR ADD/EDIT) -->
+    <div class="modal-overlay" id="job-listing-modal-overlay">
+        <div class="modal" id="job-listing-modal">
+            <div class="modal-header">
+                <h3 id="job-listing-modal-title">Add New Job</h3>
+                <button class="modal-close" id="job-listing-modal-close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="job-listing-form">
+                    <input type="hidden" id="job-listing-id">
+                    <div class="form-group">
+                        <label for="job-title">Job Title</label>
+                        <input type="text" id="job-title" placeholder="e.g., Senior Frontend Developer" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-location">Location</label>
+                        <input type="text" id="job-location" placeholder="e.g., San Francisco, CA or Remote" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-type">Job Type</label>
+                        <select id="job-type" required>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Internship">Internship</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-description">Job Description</label>
+                        <textarea id="job-description" rows="8" placeholder="Enter the full job description, responsibilities, and requirements here." required></textarea>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn-save-job" id="save-job-btn">Save Job</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT TAGS -->
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc, query, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- NEW SECURITY ENHANCEMENT: PART 1 ---
-        // This handles the browser's back/forward cache (bfcache).
-        // If a user logs out, then hits "back", the page might be restored from the cache.
-        // This forces a reload if the page is from the cache AND the user is no longer authenticated.
+        // --- Authentication Gatekeeper ---
         window.addEventListener('pageshow', function(event) {
-            // event.persisted is true if the page was restored from the bfcache.
             if (event.persisted && !auth.currentUser) {
-                // If the page is cached and the user is logged out, force a full reload.
-                // The reload will then trigger the onAuthStateChanged check below.
                 window.location.reload();
             }
         });
 
-        // --- MODIFIED SECURITY ENHANCEMENT: PART 2 ---
-        // This is the primary authentication gatekeeper.
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // If the user is authenticated, initialize the dashboard.
                 initializeDashboard(user);
             } else {
-                // If there is no authenticated user, redirect to the login page.
-                // We use replace() to prevent the user from navigating back to the dashboard page.
                 window.location.replace('admin.html');
             }
         });
 
         function initializeDashboard(user) {
-            emailjs.init('yXnRaoxKZm9Y31L2-');
+            emailjs.init('yXnRaoxKZm9Y31L2-'); // Your EmailJS Public Key
             
             const mainContent = document.getElementById('main-content');
             const sidebar = document.getElementById('sidebar');
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const logoutBtn = document.querySelector('.logout-btn');
             const mainHeaderTitle = document.getElementById('main-header-title');
-            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
-            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
-            const scheduleModalOverlay = document.getElementById('schedule-modal-overlay');
-            const scheduleModalCloseBtn = document.getElementById('schedule-modal-close-btn');
-            const scheduleForm = document.getElementById('schedule-form');
-            const confirmScheduleBtn = document.getElementById('confirm-schedule-btn');
-
             const showToast = (icon, title) => Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true }).fire({ icon, title });
-            const openScheduleModal = () => scheduleModalOverlay.classList.add('active');
-            const closeScheduleModal = () => scheduleModalOverlay.classList.remove('active');
 
-            mobileMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
-            mainContent.addEventListener('click', () => { if (sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                Swal.fire({ title: 'Logout?', icon: 'question', showCancelButton: true, confirmButtonText: 'Yes, Logout' }).then((result) => { if (result.isConfirmed) signOut(auth); });
-            });
-            viewDetailsCloseBtn.addEventListener('click', () => viewDetailsModalOverlay.classList.remove('active'));
-            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) viewDetailsModalOverlay.classList.remove('active'); });
-            scheduleModalCloseBtn.addEventListener('click', closeScheduleModal);
-            scheduleModalOverlay.addEventListener('click', (e) => { if (e.target === scheduleModalOverlay) closeScheduleModal(); });
-
+            // --- Sidebar & View Switching ---
             document.querySelectorAll('.sidebar-nav a[data-view]').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -225,42 +247,202 @@
                     Swal.fire({ icon: 'info', title: 'Feature Under Development', text: 'This feature will be available soon.' });
                 });
             });
+
+            // --- General Event Listeners ---
+            mobileMenuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
+            mainContent.addEventListener('click', () => { if (sidebar.classList.contains('open')) sidebar.classList.remove('open'); });
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.fire({ title: 'Logout?', icon: 'question', showCancelButton: true, confirmButtonText: 'Yes, Logout' }).then((result) => { if (result.isConfirmed) signOut(auth); });
+            });
+
+            // ===============================================
+            // === JOB LISTINGS (CRUD) FUNCTIONALITY START ===
+            // ===============================================
+            // This section is unchanged and correct
+            const jobListingModalOverlay = document.getElementById('job-listing-modal-overlay');
+            const jobListingModalCloseBtn = document.getElementById('job-listing-modal-close-btn');
+            const addNewJobBtn = document.getElementById('add-new-job-btn');
+            const jobListingForm = document.getElementById('job-listing-form');
+            const jobListingsGrid = document.getElementById('job-listings-grid');
+            const openJobListingModal = () => jobListingModalOverlay.classList.add('active');
+            const closeJobListingModal = () => jobListingModalOverlay.classList.remove('active');
+            addNewJobBtn.addEventListener('click', () => {
+                document.getElementById('job-listing-modal-title').textContent = 'Add New Job';
+                jobListingForm.reset();
+                jobListingForm.querySelector('#job-listing-id').value = '';
+                openJobListingModal();
+            });
+            jobListingsGrid.addEventListener('click', async (e) => {
+                const editBtn = e.target.closest('.edit-listing');
+                if (editBtn) {
+                    const docId = editBtn.dataset.id;
+                    const docSnap = await getDoc(doc(db, "job-listings", docId));
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        document.getElementById('job-listing-modal-title').textContent = 'Edit Job Listing';
+                        jobListingForm.querySelector('#job-listing-id').value = docId;
+                        jobListingForm.querySelector('#job-title').value = data.title;
+                        jobListingForm.querySelector('#job-location').value = data.location;
+                        jobListingForm.querySelector('#job-type').value = data.type;
+                        jobListingForm.querySelector('#job-description').value = data.description;
+                        openJobListingModal();
+                    }
+                }
+                const deleteBtn = e.target.closest('.delete-listing');
+                if (deleteBtn) {
+                    const docId = deleteBtn.dataset.id;
+                    Swal.fire({
+                        title: 'Delete this job listing?', text: "You won't be able to revert this!", icon: 'warning',
+                        showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Yes, delete it!'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                await deleteDoc(doc(db, "job-listings", docId));
+                                showToast('success', 'Job listing deleted.');
+                            } catch (error) { showToast('error', 'Could not delete listing.'); }
+                        }
+                    });
+                }
+            });
+            jobListingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('save-job-btn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
+                const jobData = {
+                    title: jobListingForm.querySelector('#job-title').value,
+                    location: jobListingForm.querySelector('#job-location').value,
+                    type: jobListingForm.querySelector('#job-type').value,
+                    description: jobListingForm.querySelector('#job-description').value
+                };
+                const docId = jobListingForm.querySelector('#job-listing-id').value;
+                try {
+                    if (docId) {
+                        await updateDoc(doc(db, "job-listings", docId), jobData);
+                        showToast('success', 'Job listing updated!');
+                    } else {
+                        jobData.createdAt = serverTimestamp();
+                        await addDoc(collection(db, "job-listings"), jobData);
+                        showToast('success', 'New job listing added!');
+                    }
+                    closeJobListingModal();
+                } catch (error) {
+                    showToast('error', 'Could not save listing.');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Job';
+                }
+            });
+            jobListingModalCloseBtn.addEventListener('click', closeJobListingModal);
+            jobListingModalOverlay.addEventListener('click', (e) => {
+                if (e.target === jobListingModalOverlay) closeJobListingModal();
+            });
+            const listingsQuery = query(collection(db, "job-listings"), orderBy("createdAt", "desc"));
+            onSnapshot(listingsQuery, (snapshot) => {
+                jobListingsGrid.innerHTML = '';
+                if (snapshot.empty) {
+                    jobListingsGrid.innerHTML = `<p class="no-data-message" style="grid-column: 1 / -1;"><i class="fas fa-folder-open"></i><span>No job listings created yet. Click 'Add New Job' to start.</span></p>`;
+                    return;
+                }
+                snapshot.docs.forEach((docSnap, i) => {
+                    const listing = docSnap.data();
+                    const card = document.createElement('div');
+                    card.className = 'job-listing-card';
+                    card.style.animationDelay = `${i * 50}ms`;
+                    card.innerHTML = `
+                        <div class="listing-header"><h4>${listing.title}</h4></div>
+                        <div class="listing-details">
+                            <span><i class="fas fa-map-marker-alt"></i>${listing.location}</span>
+                            <span><i class="fas fa-clock"></i>${listing.type}</span>
+                        </div>
+                        <p class="listing-description">${listing.description}</p>
+                        <div class="listing-actions">
+                            <button class="btn-action edit-listing" data-id="${docSnap.id}" style="background-color: #3498db;"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn-action delete-listing" data-id="${docSnap.id}" style="background-color: #e74c3c;"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </div>
+                    `;
+                    jobListingsGrid.appendChild(card);
+                    setTimeout(() => card.classList.add('visible'), 50);
+                });
+            });
+
+
+            // =============================================
+            // === JOB APPLICATIONS FUNCTIONALITY START ===
+            // =============================================
+            const applicationsQuery = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
+            const viewDetailsModalOverlay = document.getElementById('view-details-modal-overlay');
+            const viewDetailsCloseBtn = document.getElementById('view-details-close-btn');
+            const scheduleModalOverlay = document.getElementById('schedule-modal-overlay');
+            const scheduleModalCloseBtn = document.getElementById('schedule-modal-close-btn');
+            const scheduleForm = document.getElementById('schedule-form');
+
+            const openScheduleModal = () => scheduleModalOverlay.classList.add('active');
+            const closeScheduleModal = () => scheduleModalOverlay.classList.remove('active');
+
+            viewDetailsCloseBtn.addEventListener('click', () => viewDetailsModalOverlay.classList.remove('active'));
+            viewDetailsModalOverlay.addEventListener('click', (e) => { if (e.target === viewDetailsModalOverlay) viewDetailsModalOverlay.classList.remove('active'); });
+            scheduleModalCloseBtn.addEventListener('click', closeScheduleModal);
+            scheduleModalOverlay.addEventListener('click', (e) => { if (e.target === scheduleModalOverlay) closeScheduleModal(); });
             
+            // --- UPDATED SCHEDULE FORM LOGIC ---
             scheduleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const confirmScheduleBtn = document.getElementById('confirm-schedule-btn');
                 const { docId, name, email, position } = scheduleForm.dataset;
                 const interviewDate = document.getElementById('interview-date').value;
                 const interviewTime = document.getElementById('interview-time').value;
                 const interviewMethod = document.getElementById('interview-method').value;
+
                 if (!docId || !interviewDate || !interviewTime) return showToast('error', 'Please fill all fields.');
-                const templateParams = { name, email, position, interview_date: new Date(interviewDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), interview_time: new Date(`1970-01-01T${interviewTime}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }), interview_method: interviewMethod };
+                
+                const formattedDate = new Date(interviewDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const formattedTime = new Date(`1970-01-01T${interviewTime}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                const emailBody = `<p style="margin: 0 0 24px 0;">Thank you again for your interest in the <strong>${position}</strong> position. We were impressed with your application and would like to formally invite you for an interview to discuss your qualifications and the role in more detail.</p>
+                                 <p style="margin: 0 0 24px 0;"><strong>Interview Details:</strong><br>
+                                 • <strong>Date:</strong> ${formattedDate}<br>
+                                 • <strong>Time:</strong> ${formattedTime}<br>
+                                 • <strong>Method:</strong> ${interviewMethod}</p>
+                                 <p style="margin: 0 0 40px 0;">We look forward to speaking with you.</p>`;
+
+                const templateParams = {
+                    name,
+                    email,
+                    subject: `Interview Invitation for ${position} Role`,
+                    main_content: emailBody
+                };
+
                 confirmScheduleBtn.disabled = true;
                 confirmScheduleBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
                 try {
-                    await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams);
+                    await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams); // <-- UNIVERSAL TEMPLATE
                     await updateDoc(doc(db, "job-applications", docId), { status: 'scheduled', interviewDate, interviewTime, interviewMethod });
                     showToast('success', 'Interview scheduled and invite sent!');
                     closeScheduleModal();
                 } catch (error) { 
-                    console.error("Scheduling Error:", error);
-                    showToast('error', 'Failed to send invite. Check console for details.'); 
+                    showToast('error', 'Failed to send invite. Check console.'); 
+                    console.error("EmailJS Error:", error);
                 } finally {
                     confirmScheduleBtn.disabled = false;
                     confirmScheduleBtn.textContent = 'Confirm & Send Invite';
                 }
             });
 
+            // --- UPDATED MAIN EVENT LISTENER ---
             mainContent.addEventListener('click', async (e) => {
                 const button = e.target.closest('button.btn-action');
-                if (!button) return;
+                if (!button || !button.dataset.id || button.classList.contains('edit-listing') || button.classList.contains('delete-listing') || button.id === 'add-new-job-btn') return;
+
                 const { id, name, email, position } = button.dataset;
-                if (!id) return;
 
                 if (button.classList.contains('schedule')) {
                     scheduleForm.reset();
                     Object.assign(scheduleForm.dataset, { docId: id, name, email, position });
                     openScheduleModal();
                 } else if (button.classList.contains('view-details')) {
+                    // This is unchanged and correct
                     const docSnap = await getDoc(doc(db, "job-applications", id));
                     if (docSnap.exists()) {
                         const data = docSnap.data();
@@ -284,23 +466,49 @@
                         viewDetailsModalOverlay.classList.add('active');
                     }
                 } else if (button.classList.contains('accept')) {
-                    button.disabled = true;
-                    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Updating...`;
-                    try {
-                        await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
-                        showToast('success', 'Status updated to Accepted!');
-                    } catch (error) {
-                        console.error("Acceptance Update Error:", error);
-                        showToast('error', 'Could not update status.');
-                        button.disabled = false;
-                        button.innerHTML = `<i class="fas fa-check"></i> Accept`;
-                    }
+                    Swal.fire({
+                        title: 'Accept Application?',
+                        text: "This action will send a job offer email to the candidate.",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        confirmButtonText: 'Yes, Send Offer'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            button.disabled = true;
+                            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
+                            
+                            const emailBody = `<p style="margin: 0 0 24px 0;">Following your recent interview process, we are delighted to formally offer you the position of <strong>${position}</strong> at Lifewood!</p>
+                                             <p style="margin: 0 0 24px 0;">Your skills and experience were highly impressive, and we believe you will be a valuable asset to our team. This is the beginning of an exciting journey, and we are thrilled to have you be a part of it.</p>
+                                             <p style="margin: 0 0 24px 0;">Our HR department will be in touch with you shortly with a formal offer letter, your contract, and details about the onboarding process.</p>
+                                             <p style="margin: 0 0 40px 0;">Welcome to the team!</p>`;
+
+                            const templateParams = {
+                                name,
+                                email,
+                                subject: `Job Offer: ${position} at Lifewood`,
+                                main_content: emailBody
+                            };
+
+                            try {
+                                await emailjs.send('service_x0tfbsg', 'template_31k2ywl', templateParams); // <-- UNIVERSAL TEMPLATE
+                                
+                                await updateDoc(doc(db, "job-applications", id), { status: 'accepted' });
+                                showToast('success', 'Offer email sent & status updated!');
+                            } catch (error) {
+                                showToast('error', 'Could not send offer email.');
+                                console.error("EmailJS Error:", error);
+                                button.disabled = false;
+                                button.innerHTML = `<i class="fas fa-check"></i> Accept`;
+                            }
+                        }
+                    });
                 } else if (button.classList.contains('reject')) {
                     Swal.fire({ title: 'Reject Application?', text: "This will send a polite rejection email.", icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes, Reject' }).then(async (result) => {
                         if (result.isConfirmed) {
                             try {
-                                const templateParams = { name, email, position };
-                                await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', templateParams);
+                                // This uses the dedicated rejection template, which now also has the correct design.
+                                await emailjs.send('service_x0tfbsg', 'template_vhy1ryh', { name, email, position }); // <-- REJECTION TEMPLATE
                                 await updateDoc(doc(db, "job-applications", id), { status: 'rejected' });
                                 showToast('success', 'Rejection email sent!');
                             } catch (error) { showToast('error', 'Could not send email.'); }
@@ -316,8 +524,8 @@
                 }
             });
 
-            const q = query(collection(db, "job-applications"), orderBy("submissionDate", "desc"));
-            onSnapshot(q, (snapshot) => {
+            // --- onSnapshot for populating tables (unchanged and correct) ---
+            onSnapshot(applicationsQuery, (snapshot) => {
                 const dashboardTableBody = document.querySelector('#dashboard-applications-table tbody');
                 const fullTableBody = document.querySelector('#full-applications-table tbody');
                 dashboardTableBody.innerHTML = '';
